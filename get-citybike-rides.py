@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import requests
 from bs4 import BeautifulSoup
 import csv
 import getpass
+import umlaut
 
 # get the login data from the user
 login_data = {}
@@ -67,18 +66,18 @@ for i in range(0, line_num, 5):
                 output_row.append(children[0].get_text())
                 output_row.append(children[1].get_text() + ' ' + children[2].get_text())
 
-        # remove newlines and utf-8 encode everything
-        output_row = [t.replace('\n', ' ').strip().encode('utf-8') for t in output_row]
-
         # Cutoff the Euro-sign from the price
-        output_row[6] = output_row[6][4:]
+        output_row[6] = output_row[6][2:]
+        
+        # remove newlines and replace umlaute
+        output_row = [umlaut.normalize(t.replace('\n', ' ').strip()) for t in output_row]
 
         # add the row to the output array
         output.append(output_row)
 
 # write the output array to the csv and add headers
 print("writing csv")
-with open('export.csv', 'wb') as f:
+with open('rides.csv', 'wb') as f:
     writer = csv.writer(f)
-    writer.writerow(['Datum', 'Fahrtnummer', 'Entlehnstation', 'Entlehnzeit', 'Rückgabestation', 'Rückgabezeit', 'Preis'])
+    writer.writerow(['date', 'id', 'start_station', 'start_time', 'end_station', 'end_time', 'price'])
     writer.writerows(output)
