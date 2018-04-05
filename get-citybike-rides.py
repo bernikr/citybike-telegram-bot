@@ -47,7 +47,7 @@ for i in range(1, pages+1):
     # read the rows
     for output_row in my_acc.load_page(i):
         # check if the row is newer then the last ride from the csv
-        time = datetime.strptime(output_row[3], '%d.%m.%Y %H:%M')
+        time = datetime.strptime(output_row[2], '%d.%m.%Y %H:%M')
         if(time > last_existing_time):
             # add the row to the output array
             output.append(output_row)
@@ -67,5 +67,5 @@ with open(outputfile, 'ab') as f:
     # if it is a new file or has an error, delete the content and write a header
     if(last_existing_time == datetime.min):
         f.truncate()
-        writer.writerow(['date', 'id', 'start_station', 'start_time', 'end_station', 'end_time', 'price'])
+        writer.writerow(['date', 'start_station', 'start_time', 'end_station', 'end_time', 'price', 'elevation'])
     writer.writerows(output)

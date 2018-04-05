@@ -47,7 +47,7 @@ class CitybikeAccount:
         rows = []
         for row in table.find_all('tr'):
             output_row = []
-
+            
             # go through every cell in a row
             for cell in row.find_all('td'):
                 # check if if it is a 'normal' cell with only one data field
@@ -59,8 +59,9 @@ class CitybikeAccount:
                     output_row.append(children[0].get_text())
                     output_row.append(children[1].get_text() + ' ' + children[2].get_text())
 
-            # Cutoff the Euro-sign from the price
-            output_row[6] = output_row[6][2:]
+            # Cutoff the Euro-sign from the price and the 'm' from the elevation
+            output_row[5] = output_row[5][2:]
+            output_row[6] = output_row[6][:-2]
                 
             # remove newlines and replace umlaute
             output_row = [umlaut.normalize(t.replace('\n', ' ').strip()) for t in output_row]
