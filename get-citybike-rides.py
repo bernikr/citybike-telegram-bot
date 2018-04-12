@@ -17,7 +17,7 @@ password = getpass.getpass("Password: ")
 # if there are any errors (not existing, wrong content in column, etc) just assume the file needs to be (re)created
 try:
     with open(outputfile, 'r') as f:
-        last_existing_time = datetime.strptime(list(csv.reader(f))[-1][3], '%d.%m.%Y %H:%M')
+        last_existing_time = datetime.strptime(list(csv.reader(f))[-1][2], '%d.%m.%Y %H:%M')
 except:
     print("Error in reading existing file. It will be created or overwritten.")
 
