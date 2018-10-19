@@ -11,11 +11,11 @@ output = []
 
 print('convert data')
 for station in data['features']:
-    output_row = []
-
-    output_row.append(uml.normalize(station['properties']['STATION']))
-    output_row.append(station['geometry']['coordinates'][1])
-    output_row.append(station['geometry']['coordinates'][0])
+    output_row = [
+        uml.normalize(station['properties']['STATION']),
+        station['geometry']['coordinates'][1],
+        station['geometry']['coordinates'][0]
+    ]
 
     output.append(output_row)
 
