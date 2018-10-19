@@ -46,26 +46,35 @@ class CitybikeAccount:
 
         rows = []
         for row in table.find_all('tr'):
-            output_row = []
+            r = []
 
             # go through every cell in a row
             for cell in row.find_all('td'):
                 # check if if it is a 'normal' cell with only one data field
                 children = cell.findChildren()
                 if len(children) <= 1:
-                    output_row.append(cell.get_text())
+                    r.append(cell.get_text())
                 else:
                     # if it contains a location and a date split it into two
-                    output_row.append(children[0].get_text())
-                    output_row.append(children[1].get_text() + ' ' + children[2].get_text())
+                    r.append(children[0].get_text())
+                    r.append(children[1].get_text() + ' ' + children[2].get_text())
 
             # Cutoff the Euro-sign from the price and the 'm' from the elevation
-            output_row[5] = output_row[5][2:]
-            output_row[6] = output_row[6][:-2]
+            r[5] = r[5][2:]
+            r[6] = r[6][:-2]
 
             # remove newlines and replace umlaute
-            output_row = [umlaut.normalize(t.replace('\n', ' ').strip()) for t in output_row]
+            r = [umlaut.normalize(t.replace('\n', ' ').strip()) for t in r]
 
-            rows.append(output_row)
+            output_row_obj = {'date': r[0],
+                              'start_station': r[1],
+                              'start_time': r[2],
+                              'end_station': r[3],
+                              'end_time': r[4],
+                              'price': r[5],
+                              'elevation': r[6]
+                              }
+
+            rows.append(output_row_obj)
 
         return rows
