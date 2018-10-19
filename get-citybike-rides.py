@@ -1,6 +1,3 @@
-import csv
-from datetime import datetime
-import sqlite3
 from citybike import CitybikeAccount
 from db import DB
 

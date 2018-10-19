@@ -22,10 +22,10 @@ class DB:
 
         self.c.execute('CREATE TABLE IF NOT EXISTS ride ('
                        'id INTEGER PRIMARY KEY,'
-                       'user INTEGER REFERENCES user(id),'
+                       'user INTEGER NOT NULL REFERENCES user(id),'
                        'date TEXT,'
-                       'start_station INTEGER REFERENCES station(id),'
-                       'end_station INTEGER REFERENCES station(id),'
+                       'start_station INTEGER NOT NULL REFERENCES station(id),'
+                       'end_station INTEGER NOT NULL REFERENCES station(id),'
                        'start_time TEXT,'
                        'end_time TEXT,'
                        'price NUMERIC,'
@@ -49,8 +49,7 @@ class DB:
                        ':start_time, :end_time, :price, :elevation)', ride)
         self.db.commit()
 
-    def update_station(self, station):
-        self.c.execute('INSERT OR REPLACE INTO station(id, name, bezirk, lat, lon)'
-                       'VALUES(:id, :name, :bezirk, :lat, :lon)', station)
+    def update_stations(self, stations):
+        self.c.executemany('INSERT OR REPLACE INTO station(id, name, bezirk, lat, lon)'
+                           'VALUES(:id, :name, :bezirk, :lat, :lon)', stations)
         self.db.commit()
-
