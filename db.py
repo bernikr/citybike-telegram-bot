@@ -3,8 +3,8 @@ from datetime import datetime
 
 
 class DB:
-    def __init__(self):
-        self.db = sqlite3.connect('citybikes.db', detect_types=sqlite3.PARSE_DECLTYPES)
+    def __init__(self, db_path):
+        self.db = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES)
         self.db.row_factory = sqlite3.Row
 
         self.c = self.db.cursor()

@@ -3,7 +3,7 @@ from db import DB
 
 
 def main():
-    db = DB()
+    db = DB('citybikes.db')
 
     db.update_stations(citybikeAPI.get_stations())
 

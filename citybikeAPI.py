@@ -73,7 +73,7 @@ class CitybikeAccount:
                               'start_time': datetime.strptime(r[2], '%d.%m.%Y %H:%M'),
                               'end_station': r[3],
                               'end_time': datetime.strptime(r[4], '%d.%m.%Y %H:%M'),
-                              'price': r[5],
+                              'price': float(r[5].replace(',', '.')),
                               'elevation': r[6]
                               }
             rows.append(output_row_obj)
