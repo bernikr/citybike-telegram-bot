@@ -1,4 +1,5 @@
 import math
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import umlaut
@@ -66,11 +67,11 @@ class CitybikeAccount:
             # remove newlines and replace umlaute
             r = [umlaut.normalize(t.replace('\n', ' ').strip()) for t in r]
 
-            output_row_obj = {'date': r[0],
+            output_row_obj = {'date': datetime.strptime(r[0], '%d.%m.%Y').date(),
                               'start_station': r[1],
-                              'start_time': r[2],
+                              'start_time': datetime.strptime(r[2], '%d.%m.%Y %H:%M'),
                               'end_station': r[3],
-                              'end_time': r[4],
+                              'end_time': datetime.strptime(r[4], '%d.%m.%Y %H:%M'),
                               'price': r[5],
                               'elevation': r[6]
                               }
