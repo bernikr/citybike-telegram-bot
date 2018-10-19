@@ -1,8 +1,9 @@
+import json
 import math
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-import umlaut
+import utils
 
 
 class CitybikeAccount:
@@ -65,7 +66,7 @@ class CitybikeAccount:
             r[6] = r[6][:-2]
 
             # remove newlines and replace umlaute
-            r = [umlaut.normalize(t.replace('\n', ' ').strip()) for t in r]
+            r = [utils.normalize_umlauts(t.replace('\n', ' ').strip()) for t in r]
 
             output_row_obj = {'date': datetime.strptime(r[0], '%d.%m.%Y').date(),
                               'start_station': r[1],
@@ -103,3 +104,19 @@ class CitybikeAccount:
                     newdata = False
                     break
         return output
+
+
+def get_stations():
+    data = requests.get('https://data.wien.gv.at/daten/geo'
+                        '?service=WFS&request=GetFeature&version=1.1.0'
+                        '&typeName=ogdwien:CITYBIKEOGD&srsName=EPSG:4326&outputFormat=json')
+    json_data = json.loads(data.content)
+    raw_data = json_data['features']
+
+    formatted_data = [{'id': s['properties']['SE_SDO_ROWID'],
+                       'bezirk': s['properties']['BEZIRK'],
+                       'name': utils.normalize_umlauts(s['properties']['STATION']),
+                       'lat': s['geometry']['coordinates'][1],
+                       'lon': s['geometry']['coordinates'][0]
+                       } for s in raw_data]
+    return formatted_data
