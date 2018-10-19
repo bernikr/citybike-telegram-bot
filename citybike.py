@@ -75,7 +75,31 @@ class CitybikeAccount:
                               'price': r[5],
                               'elevation': r[6]
                               }
-
             rows.append(output_row_obj)
-
         return rows
+
+    def get_rides(self, since=datetime.min):
+        pages = self.get_page_count()
+        print(str(pages) + " pages found")
+
+        output = []
+        newdata = True  # helper for aborting the double loop
+        # load all pages and add them to the outputs
+        for i in range(1, pages + 1):
+            if not newdata:  # check if the inner loop was aborted
+                break
+
+            # load the current table
+            print("Loading page " + str(i) + "/" + str(pages))
+
+            # read the rows
+            for output_row in self.load_page(i):
+                # check if the row is newer then the requested timestamp
+                if output_row['end_time'] > since:
+                    output.append(output_row)
+                else:
+                    # stop the datacollection if the ride already exists
+                    print("All new data loaded. Abort data collection")
+                    newdata = False
+                    break
+        return output
