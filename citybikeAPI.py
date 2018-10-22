@@ -1,5 +1,6 @@
 import json
 import math
+import pickle
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
@@ -11,13 +12,16 @@ class LoginError(IOError):
 
 
 class CitybikeAccount:
-    def __init__(self, username, password):
+    def __init__(self, username, password, cookie_dump=None):
         self.username = username
         self.password = password
 
         # start a request session to store the login cookie
         self.s = requests.Session()
-        self.login()
+        if cookie_dump is None:
+            self.login()
+        else:
+            self.s.cookies.update(pickle.loads(cookie_dump))
 
     def login(self):
         login_data = {"username": self.username, "password": self.password}
@@ -38,12 +42,15 @@ class CitybikeAccount:
             raise LoginError()
         self.username = user_name[1].get_text()[:-1]
 
+    def get_cookies_dump(self):
+        return pickle.dumps(self.s.cookies)
+
     def get_page_count(self):
         # get the number of existing rows from the website
-        page = self.s.get("https://www.citybikewien.at/en/my-rides")
+        page = self.s.get("https://www.citybikewien.at/de/meine-fahrten")
         soup = BeautifulSoup(page.content, 'html.parser')
         tab = soup.select('#content div + p')[0]
-        line_num = int(tab.get_text().split(' ')[0])
+        line_num = int(tab.get_text().split(' ')[2])
         return math.ceil(line_num / 5)
 
     def load_page(self, i):
@@ -86,7 +93,11 @@ class CitybikeAccount:
         return rows
 
     def get_rides(self, since=datetime.min):
-        pages = self.get_page_count()
+        try:
+            pages = self.get_page_count()
+        except:
+            self.login()
+            pages = self.get_page_count()
         print(str(pages) + " pages found")
 
         output = []

@@ -16,7 +16,8 @@ class DB:
         self.c.execute('CREATE TABLE IF NOT EXISTS user ('
                        'id INTEGER PRIMARY KEY,'
                        'username TEXT NOT NULL,'
-                       'password TEXT'
+                       'password TEXT,'
+                       'cookie_dump BLOB'
                        ')')
 
         self.c.execute('CREATE TABLE IF NOT EXISTS station ('
@@ -75,4 +76,8 @@ class DB:
 
     def new_user(self, user_id, username, password):
         self.c.execute('INSERT INTO user(id, username, password) VALUES (?,?,?)', [user_id, username, password])
+        self.db.commit()
+
+    def store_cookie_dump(self, user_id, cookie_dump):
+        self.c.execute('UPDATE user SET cookie_dump=? WHERE id=?', (cookie_dump, user_id))
         self.db.commit()

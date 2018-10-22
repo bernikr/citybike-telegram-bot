@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
+    update.message.reply_text('There was an error. Please try again')
 
 
 def start(bot, update):
@@ -38,13 +39,15 @@ def login(bot, update, args):
 
     if len(args) < 2:
         update.message.reply_text('Bot must be started with \'/login username password\'')
+        update.message.reply_text('⚠️WARNING⚠️\nYou should never submit any login data to a third party. '
+                                  'Only use this bot if you know me personally and trust me with your login.')
         return
 
     username = args[0]
     password = ' '.join(args[1:])
 
     try:
-        citybikeAPI.CitybikeAccount(username, password)
+        my_acc = citybikeAPI.CitybikeAccount(username, password)
     except citybikeAPI.LoginError:
         update.message.reply_text('There was an error logging in. Check your username and Password')
         return
@@ -53,6 +56,7 @@ def login(bot, update, args):
 
     with DB() as db:
         db.new_user(user_id, username, password)
+        db.store_cookie_dump(user_id, my_acc.get_cookies_dump())
         rides = update_rides(db, user_id)
         update.message.reply_text('%d rides found.' % len(rides))
 
@@ -68,21 +72,21 @@ def update(bot, update):
     update.message.reply_text('Getting new rides')
     user_id = update.message.chat.id
     with DB() as db:
+        if db.get_user(user_id) is None:
+            update.message.reply_text('You must be logged in to do this. Use /login')
+            return
         rides = update_rides(db, user_id)
         update.message.reply_text('%d new rides downloaded rides found.' % len(rides))
 
 
 def main():
-    logger.info('Load Config File')
     with open('config.json') as f:
         config = json.load(f)
 
-    logger.info('Update Station Table')
     with DB() as db:
         db.init_tables()
         db.update_stations(citybikeAPI.get_stations())
 
-    logger.info('Initialize Bot')
     updater = Updater(config['bot_token'])
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
@@ -91,14 +95,14 @@ def main():
     dp.add_handler(CommandHandler(['stop', 'deleteUserData'], delete_user_data))
     dp.add_error_handler(error)
     updater.start_polling()
-    logger.info('Starting Polling...')
     updater.idle()
 
 
 def update_rides(db, user_id):
     u = db.get_user(user_id)
-    my_acc = citybikeAPI.CitybikeAccount(u['username'], u['password'])
+    my_acc = citybikeAPI.CitybikeAccount(u['username'], u['password'], u['cookie_dump'])
     rides = my_acc.get_rides(since=db.get_newest_end_time(user_id))
+    db.store_cookie_dump(user_id, my_acc.get_cookies_dump())
     for r in rides:
         db.insert_ride(r, user_id)
     return rides
