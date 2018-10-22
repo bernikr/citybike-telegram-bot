@@ -45,16 +45,15 @@ class CitybikeAccount:
     def get_cookies_dump(self):
         return pickle.dumps(self.s.cookies)
 
-    def get_page_count(self):
+    def get_ride_count(self):
         # get the number of existing rows from the website
         page = self.s.get("https://www.citybikewien.at/de/meine-fahrten")
         soup = BeautifulSoup(page.content, 'html.parser')
         tab = soup.select('#content div + p')[0]
-        line_num = int(tab.get_text().split(' ')[2])
-        return math.ceil(line_num / 5)
+        return int(tab.get_text().split(' ')[2])
 
-    def load_page(self, i):
-        data_url = "https://www.citybikewien.at/de/meine-fahrten?start=" + str((i - 1) * 5)
+    def load_page(self, starting_id):
+        data_url = "https://www.citybikewien.at/de/meine-fahrten?start=" + str(starting_id)
         page = self.s.get(data_url)
         soup = BeautifulSoup(page.content, 'html.parser')
         table = soup.select('#content table tbody')[0]
@@ -92,34 +91,33 @@ class CitybikeAccount:
             rows.append(output_row_obj)
         return rows
 
-    def get_rides(self, since=datetime.min):
+    def get_rides(self, since=datetime.min, callback=None, callbackArgs=None):
         try:
-            pages = self.get_page_count()
+            ride_count = self.get_ride_count()
         except:
             self.login()
-            pages = self.get_page_count()
-        print(str(pages) + " pages found")
+            ride_count = self.get_ride_count()
 
         output = []
         newdata = True  # helper for aborting the double loop
         # load all pages and add them to the outputs
-        for i in range(1, pages + 1):
+        for i in range(0, ride_count, 5):
             if not newdata:  # check if the inner loop was aborted
                 break
-
-            # load the current table
-            print("Loading page " + str(i) + "/" + str(pages))
-
             # read the rows
             for output_row in self.load_page(i):
                 # check if the row is newer then the requested timestamp
                 if output_row['end_time'] > since:
                     output.append(output_row)
+                    i += 1
+                    if callback is not None:
+                        callback(current=i, count=ride_count, finished=False, callbackArgs=callbackArgs)
                 else:
                     # stop the datacollection if the ride already exists
-                    print("All new data loaded. Abort data collection")
                     newdata = False
                     break
+        if callback is not None:
+            callback(current=len(output), finished=True, callbackArgs=callbackArgs)
         return output
 
 

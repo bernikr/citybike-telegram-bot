@@ -57,8 +57,7 @@ def login(bot, update, args):
     with DB() as db:
         db.new_user(user_id, username, password)
         db.store_cookie_dump(user_id, my_acc.get_cookies_dump())
-        rides = update_rides(db, user_id)
-        update.message.reply_text('%d rides found.' % len(rides))
+        update_rides(bot, db, user_id)
 
 
 def delete_user_data(bot, update):
@@ -69,14 +68,12 @@ def delete_user_data(bot, update):
 
 
 def update(bot, update):
-    update.message.reply_text('Getting new rides')
     user_id = update.message.chat.id
     with DB() as db:
         if db.get_user(user_id) is None:
             update.message.reply_text('You must be logged in to do this. Use /login')
             return
-        rides = update_rides(db, user_id)
-        update.message.reply_text('%d new rides downloaded rides found.' % len(rides))
+        update_rides(bot, db, user_id)
 
 
 def main():
@@ -98,14 +95,27 @@ def main():
     updater.idle()
 
 
-def update_rides(db, user_id):
+def update_rides(bot, db, user_id, silent=False):
+    callback = None
+    if not silent:
+        msg = bot.send_message(user_id, 'Loading rides...')
+        callback = update_rides_callback
+
     u = db.get_user(user_id)
     my_acc = citybikeAPI.CitybikeAccount(u['username'], u['password'], u['cookie_dump'])
-    rides = my_acc.get_rides(since=db.get_newest_end_time(user_id))
+    rides = my_acc.get_rides(since=db.get_newest_end_time(user_id), callback=callback, callbackArgs=(bot, msg, 0))
     db.store_cookie_dump(user_id, my_acc.get_cookies_dump())
+
     for r in rides:
         db.insert_ride(r, user_id)
-    return rides
+
+
+def update_rides_callback(current=0, count=0, finished=False, callbackArgs=()):
+    bot, msg, db_count = callbackArgs
+    if finished:
+        bot.edit_message_text('%d new rides loaded✅' % current, chat_id=msg.chat.id, message_id=msg.message_id)
+    else:
+        bot.edit_message_text('Loading rides: %d/%d' % (current, count-db_count), chat_id=msg.chat.id, message_id=msg.message_id)
 
 
 if __name__ == "__main__":
