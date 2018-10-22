@@ -97,13 +97,14 @@ def main():
 
 def update_rides(bot, db, user_id, silent=False):
     callback = None
+    msg = None
     if not silent:
         msg = bot.send_message(user_id, 'Loading rides...')
         callback = update_rides_callback
 
     u = db.get_user(user_id)
     my_acc = citybikeAPI.CitybikeAccount(u['username'], u['password'], u['cookie_dump'])
-    rides = my_acc.get_rides(since=db.get_newest_end_time(user_id), callback=callback, callbackArgs=(bot, msg, 0))
+    rides = my_acc.get_rides(since=db.get_newest_end_time(user_id), callback=callback, callbackArgs=(bot, msg))
     db.store_cookie_dump(user_id, my_acc.get_cookies_dump())
 
     for r in rides:
@@ -111,11 +112,11 @@ def update_rides(bot, db, user_id, silent=False):
 
 
 def update_rides_callback(current=0, count=0, finished=False, callbackArgs=()):
-    bot, msg, db_count = callbackArgs
+    bot, msg = callbackArgs
     if finished:
         bot.edit_message_text('%d new rides loaded✅' % current, chat_id=msg.chat.id, message_id=msg.message_id)
     else:
-        bot.edit_message_text('Loading rides: %d/%d' % (current, count-db_count), chat_id=msg.chat.id, message_id=msg.message_id)
+        bot.edit_message_text('Loading rides: %d/%d' % (current, count), chat_id=msg.chat.id, message_id=msg.message_id)
 
 
 if __name__ == "__main__":
