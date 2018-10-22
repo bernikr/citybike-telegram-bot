@@ -3,11 +3,16 @@ from datetime import datetime
 
 
 class DB:
-    def __init__(self, db_path):
-        self.db = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES)
+    def __enter__(self):
+        self.db = sqlite3.connect('citybikes.db', detect_types=sqlite3.PARSE_DECLTYPES)
         self.db.row_factory = sqlite3.Row
-
         self.c = self.db.cursor()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.db.close()
+
+    def init_tables(self):
         self.c.execute('CREATE TABLE IF NOT EXISTS user ('
                        'id INTEGER PRIMARY KEY,'
                        'username TEXT NOT NULL,'
@@ -36,10 +41,6 @@ class DB:
 
         self.db.commit()
 
-    def get_users(self):
-        self.c.execute('SELECT * FROM user')
-        return self.c.fetchall()
-
     def insert_ride(self, ride, user_id):
         ride['user_id'] = user_id
         self.c.execute('INSERT INTO ride'
@@ -62,3 +63,16 @@ class DB:
             return datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
         else:
             return datetime.min
+
+    def get_user(self, user_id):
+        self.c.execute('SELECT * FROM user WHERE id=?', [user_id])
+        return self.c.fetchone()
+
+    def delete_user(self, user_id):
+        self.c.execute('DELETE FROM user WHERE id=?', [user_id])
+        self.c.execute('DELETE FROM ride WHERE user=?', [user_id])
+        self.db.commit()
+
+    def new_user(self, user_id, username, password):
+        self.c.execute('INSERT INTO user(id, username, password) VALUES (?,?,?)', [user_id, username, password])
+        self.db.commit()
