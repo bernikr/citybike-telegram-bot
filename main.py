@@ -13,21 +13,48 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
-def start(bot, update, args):
-    if update.message.chat.type == 'private':
-        user_id = update.message.chat.id
-
-        if len(args) < 2:
-            update.message.reply_text('Bot must be started with \'/start username password\'')
-        else:
-            username = args[0]
-            password = ' '.join(args[1:])
-            with DB() as db:
-                db.new_user(user_id, username, password)
-            rides = update_rides(user_id)
-            update.message.reply_text('Logged in as %s!\n%d rides found.' % (username, len(rides)))
-    else:
+def start(bot, update):
+    if update.message.chat.type != 'private':
         update.message.reply_text('this bot only works in private chats')
+    else:
+        update.message.reply_text('Use \'/login username password\' to log into your Citybike Account')
+        update.message.reply_text('⚠️WARNING⚠️\nYou should never submit any login data to a third party. '
+                                  'Only use this bot if you know me personally and trust me with your login.')
+
+
+def login(bot, update, args):
+    if update.message.chat.type != 'private':
+        update.message.reply_text('this bot only works in private chats')
+        return
+
+    user_id = update.message.chat.id
+
+    with DB() as db:
+        user = db.get_user(user_id)
+    if user is not None:
+        update.message.reply_text('There is already a CityBike Account Linked with this Telegram Account.\n'
+                                  'Please use /deleteUserData to delete existing user data.')
+        return
+
+    if len(args) < 2:
+        update.message.reply_text('Bot must be started with \'/login username password\'')
+        return
+
+    username = args[0]
+    password = ' '.join(args[1:])
+
+    try:
+        citybikeAPI.CitybikeAccount(username, password)
+    except citybikeAPI.LoginError:
+        update.message.reply_text('There was an error logging in. Check your username and Password')
+        return
+
+    update.message.reply_text('Logged in as %s!\nDownloading rides (this may take a while)' % username)
+
+    with DB() as db:
+        db.new_user(user_id, username, password)
+        rides = update_rides(db, user_id)
+        update.message.reply_text('%d rides found.' % len(rides))
 
 
 def delete_user_data(bot, update):
@@ -35,6 +62,14 @@ def delete_user_data(bot, update):
     with DB() as db:
         db.delete_user(user_id)
         update.message.reply_text('Removed all User Data')
+
+
+def update(bot, update):
+    update.message.reply_text('Getting new rides')
+    user_id = update.message.chat.id
+    with DB() as db:
+        rides = update_rides(db, user_id)
+        update.message.reply_text('%d new rides downloaded rides found.' % len(rides))
 
 
 def main():
@@ -50,21 +85,22 @@ def main():
     logger.info('Initialize Bot')
     updater = Updater(config['bot_token'])
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start, pass_args=True))
-    dp.add_handler(CommandHandler(["stop", "deleteUserData"], delete_user_data))
+    dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(CommandHandler('login', login, pass_args=True))
+    dp.add_handler(CommandHandler('update', update))
+    dp.add_handler(CommandHandler(['stop', 'deleteUserData'], delete_user_data))
     dp.add_error_handler(error)
     updater.start_polling()
     logger.info('Starting Polling...')
     updater.idle()
 
 
-def update_rides(user_id):
-    with DB() as db:
-        u = db.get_user(user_id)
-        my_acc = citybikeAPI.CitybikeAccount(u['username'], u['password'])
-        rides = my_acc.get_rides(since=db.get_newest_end_time(user_id))
-        for r in rides:
-            db.insert_ride(r, user_id)
+def update_rides(db, user_id):
+    u = db.get_user(user_id)
+    my_acc = citybikeAPI.CitybikeAccount(u['username'], u['password'])
+    rides = my_acc.get_rides(since=db.get_newest_end_time(user_id))
+    for r in rides:
+        db.insert_ride(r, user_id)
     return rides
 
 

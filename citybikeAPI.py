@@ -6,13 +6,21 @@ from bs4 import BeautifulSoup
 import utils
 
 
+class LoginError(IOError):
+    pass
+
+
 class CitybikeAccount:
     def __init__(self, username, password):
-        login_data = {"username": username, "password": password}
+        self.username = username
+        self.password = password
 
         # start a request session to store the login cookie
         self.s = requests.Session()
+        self.login()
 
+    def login(self):
+        login_data = {"username": self.username, "password": self.password}
         # get the hidden login fields needed to login
         frontpage = self.s.get("https://www.citybikewien.at/de")
         fp = BeautifulSoup(frontpage.content, 'html.parser')
@@ -22,14 +30,12 @@ class CitybikeAccount:
             login_data[i['name']] = i['value']
 
         # login to the site and save the cookie to the session
-
         login_url = "https://www.citybikewien.at/de/component/users/?task=user.login&Itemid=101"
         logedin = self.s.post(login_url, data=login_data)
         soup = BeautifulSoup(logedin.content, 'html.parser')
         user_name = soup.select(".user-name-data")
         if len(user_name) < 1:
-            print("invalid login")
-            exit()
+            raise LoginError()
         self.username = user_name[1].get_text()[:-1]
 
     def get_page_count(self):
