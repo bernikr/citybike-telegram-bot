@@ -59,8 +59,8 @@ def login(bot, update, args):
     update.message.reply_text('Logged in as %s!\nDownloading rides (this may take a while)' % user.username)
 
     session.add(user)
-    session.commit()
     update_rides(bot, session, user)
+    session.commit()
     DB.remove()
 
 
