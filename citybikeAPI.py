@@ -1,10 +1,10 @@
 import json
-import math
 import pickle
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import utils
+from DBtypes import Station, Ride
 
 
 class LoginError(IOError):
@@ -12,19 +12,18 @@ class LoginError(IOError):
 
 
 class CitybikeAccount:
-    def __init__(self, username, password, cookie_dump=None):
-        self.username = username
-        self.password = password
-
+    def __init__(self, user):
         # start a request session to store the login cookie
+        self.user = user
         self.s = requests.Session()
-        if cookie_dump is None:
+        if user.cookie_dump is None:
             self.login()
+            user.cookie_dump = pickle.dumps(self.s.cookies)
         else:
-            self.s.cookies.update(pickle.loads(cookie_dump))
+            self.s.cookies.update(pickle.loads(user.cookie_dump))
 
     def login(self):
-        login_data = {"username": self.username, "password": self.password}
+        login_data = {"username": self.user.username, "password": self.user.password}
         # get the hidden login fields needed to login
         frontpage = self.s.get("https://www.citybikewien.at/de")
         fp = BeautifulSoup(frontpage.content, 'html.parser')
@@ -40,10 +39,6 @@ class CitybikeAccount:
         user_name = soup.select(".user-name-data")
         if len(user_name) < 1:
             raise LoginError()
-        self.username = user_name[1].get_text()[:-1]
-
-    def get_cookies_dump(self):
-        return pickle.dumps(self.s.cookies)
 
     def get_ride_count(self):
         # get the number of existing rows from the website
@@ -52,13 +47,13 @@ class CitybikeAccount:
         tab = soup.select('#content div + p')[0]
         return int(tab.get_text().split(' ')[2])
 
-    def load_page(self, starting_id):
+    def load_page(self, starting_id, since=datetime.min):
         data_url = "https://www.citybikewien.at/de/meine-fahrten?start=" + str(starting_id)
         page = self.s.get(data_url)
         soup = BeautifulSoup(page.content, 'html.parser')
         table = soup.select('#content table tbody')[0]
 
-        rows = []
+        rides = []
         for row in table.find_all('tr'):
             r = []
 
@@ -80,18 +75,27 @@ class CitybikeAccount:
             # remove newlines and replace umlaute
             r = [utils.normalize_umlauts(t.replace('\n', ' ').strip()) for t in r]
 
-            output_row_obj = {'date': datetime.strptime(r[0], '%d.%m.%Y').date(),
-                              'start_station': r[1],
-                              'start_time': datetime.strptime(r[2], '%d.%m.%Y %H:%M'),
-                              'end_station': r[3],
-                              'end_time': datetime.strptime(r[4], '%d.%m.%Y %H:%M'),
-                              'price': float(r[5].replace(',', '.')),
-                              'elevation': r[6]
-                              }
-            rows.append(output_row_obj)
-        return rows
+            end_time = datetime.strptime(r[4], '%d.%m.%Y %H:%M')
 
-    def get_rides(self, since=datetime.min, callback=None, callbackArgs=None):
+            if end_time > since:
+                ride = Ride(user=self.user,
+                            date=datetime.strptime(r[0], '%d.%m.%Y').date(),
+                            start_station_name=r[1],
+                            start_time=datetime.strptime(r[2], '%d.%m.%Y %H:%M'),
+                            end_station_name=r[3],
+                            end_time=end_time,
+                            price=float(r[5].replace(',', '.')),
+                            elevation=r[6]
+                            )
+                rides.append(ride)
+            else:
+                break
+        return rides
+
+    def get_rides(self, since=None, callback=None, callbackArgs=None):
+        if since is None:
+            since = datetime.min
+
         try:
             ride_count = self.get_ride_count()
         except:
@@ -105,10 +109,10 @@ class CitybikeAccount:
             if not newdata:  # check if the inner loop was aborted
                 break
             # read the rows
-            for output_row in self.load_page(i):
+            for ride in self.load_page(i, since=since):
                 # check if the row is newer then the requested timestamp
-                if output_row['end_time'] > since:
-                    output.append(output_row)
+                if ride.end_time > since:
+                    output.append(ride)
                     i += 1
                     if callback is not None:
                         callback(current=i, count=ride_count, finished=False, callbackArgs=callbackArgs)
@@ -128,10 +132,11 @@ def get_stations():
     json_data = json.loads(data.content)
     raw_data = json_data['features']
 
-    formatted_data = [{'id': s['properties']['SE_SDO_ROWID'],
-                       'bezirk': s['properties']['BEZIRK'],
-                       'name': utils.normalize_umlauts(s['properties']['STATION']),
-                       'lat': s['geometry']['coordinates'][1],
-                       'lon': s['geometry']['coordinates'][0]
-                       } for s in raw_data]
-    return formatted_data
+    stations = [Station(id=s['properties']['SE_SDO_ROWID'],
+                        bezirk=s['properties']['BEZIRK'],
+                        name=utils.normalize_umlauts(s['properties']['STATION']),
+                        #name=s['properties']['STATION'],
+                        lat=s['geometry']['coordinates'][1],
+                        lon=s['geometry']['coordinates'][0]
+                        ) for s in raw_data]
+    return stations
