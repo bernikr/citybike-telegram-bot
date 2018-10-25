@@ -103,23 +103,16 @@ class CitybikeAccount:
             ride_count = self.get_ride_count()
 
         output = []
-        newdata = True  # helper for aborting the double loop
         # load all pages and add them to the outputs
         for i in range(0, ride_count, 5):
-            if not newdata:  # check if the inner loop was aborted
-                break
             # read the rows
-            for ride in self.load_page(i, since=since):
-                # check if the row is newer then the requested timestamp
-                if ride.end_time > since:
-                    output.append(ride)
-                    i += 1
-                    if callback is not None:
-                        callback(current=i, count=ride_count, finished=False, callbackArgs=callbackArgs)
-                else:
-                    # stop the datacollection if the ride already exists
-                    newdata = False
-                    break
+            newrides = self.load_page(i, since=since)
+            output.extend(newrides)
+            if len(newrides) < 5:
+                break
+            else:
+                if callback is not None:
+                    callback(current=i, count=ride_count, finished=False, callbackArgs=callbackArgs)
         if callback is not None:
             callback(current=len(output), finished=True, callbackArgs=callbackArgs)
         return output
