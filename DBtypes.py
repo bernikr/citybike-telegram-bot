@@ -1,7 +1,7 @@
 from sqlalchemy import Column, UniqueConstraint, ForeignKey
 from sqlalchemy import types
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 Base = declarative_base()
 
@@ -13,8 +13,6 @@ class User(Base):
     username    = Column(types.String)
     password    = Column(types.String)
     cookie_dump = Column(types.Binary)
-
-    rides = relationship('Ride', back_populates="user")
 
     def __repr__(self):
         return "<User(id='%s', username='%s'>" % (self.id, self.username)
@@ -46,11 +44,11 @@ class Ride(Base):
     price               = Column(types.Float)
     elevation           = Column(types.Integer)
 
-    user            = relationship(User, back_populates="rides")
+    user            = relationship(User, backref=backref('rides'))
     start_station   = relationship(Station, foreign_keys=start_station_id)
     end_station     = relationship(Station, foreign_keys=end_station_id)
 
-    __table_args__ = (UniqueConstraint(user_id, start_time),)
+    __table_args__ = (UniqueConstraint(user_id, end_time),)
 
     def __init__(self, user=None, start_station_name=None, start_time=None, end_station_name=None, end_time=None,
                  price=None, elevation=None, date=None):

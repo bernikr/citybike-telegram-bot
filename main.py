@@ -59,6 +59,7 @@ def login(bot, update, args):
     update.message.reply_text('Logged in as %s!\nDownloading rides (this may take a while)' % user.username)
 
     session.add(user)
+    session.commit()
     update_rides(bot, session, user)
     session.commit()
     DB.remove()
@@ -66,7 +67,11 @@ def login(bot, update, args):
 
 def delete_user_data(bot, update):
     user_id = update.message.chat.id
-    # TODO
+    session = DB()
+    session.query(User).filter(User.id == user_id).delete()
+    session.query(Ride).filter(Ride.user_id == user_id).delete()
+    session.commit()
+    DB.remove()
     update.message.reply_text('Removed all User Data')
 
 
