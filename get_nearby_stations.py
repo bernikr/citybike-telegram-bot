@@ -3,7 +3,6 @@ from operator import itemgetter
 import requests
 from geopy import distance
 from telegram import *
-from telegram.ext import CallbackContext
 
 
 def emoji_number(i):
@@ -13,9 +12,9 @@ def emoji_number(i):
         return "⚠️ %d" % i
     return "✅ %d" % i
 
-def get_nearby_stations(update: Update, context: CallbackContext):
+def get_nearby_stations(update, context):
     if update.message:
-        loc: Location = update.message.location
+        loc = update.message.location
 
         r = requests.get('https://api.citybik.es/v2/networks/citybike-wien')
         stations = r.json()['network']['stations']
