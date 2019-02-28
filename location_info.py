@@ -3,6 +3,7 @@ from operator import itemgetter
 import requests
 import xmltodict
 from geopy import distance
+from telegram import ReplyKeyboardRemove
 from telegram.ext import MessageHandler, Filters, ConversationHandler, CommandHandler
 
 
@@ -53,7 +54,7 @@ def get_nearby_stations(update, context):
         station_texts = [format_station_text(s) for s in near_stations]
 
         msg_text = "\n\n".join(station_texts)
-        context.bot.send_message(chat_id=update.message.chat_id, text=msg_text, parse_mode="Markdown", disable_web_page_preview=True)
+        context.bot.send_message(chat_id=update.message.chat_id, text=msg_text, parse_mode="Markdown", disable_web_page_preview=True, reply_markup=ReplyKeyboardRemove())
         if 'home_station' not in context.user_data:
             context.bot.send_message(chat_id=update.message.chat_id, text="No home station set.\nUse /sethome to set it")
         elif context.user_data['home_station'] is not None:
