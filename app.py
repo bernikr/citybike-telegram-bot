@@ -3,7 +3,7 @@ import logging
 
 from telegram.ext import *
 
-from get_nearby_stations import get_nearby_stations
+from location_info import location_info_handler
 
 
 def main():
@@ -12,9 +12,10 @@ def main():
     with open('config.json') as f:
         config = json.load(f)
 
-    updater = Updater(config['bot_token'], use_context=True)
+    per = PicklePersistence(filename='data')
+    updater = Updater(config['bot_token'], use_context=True, persistence=per)
     dp = updater.dispatcher
-    dp.add_handler(MessageHandler(Filters.location, get_nearby_stations))
+    dp.add_handler(location_info_handler)
     updater.start_polling()
     updater.idle()
 
