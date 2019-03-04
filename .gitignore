@@ -1,12 +1,13 @@
+.idea/
+citybikes.iml
 
 *.csv
 *.pyc
 .Rhistory
 .RData
-.idea/workspace.xml
-.idea/dataSources.local.xml
-.idea/dataSources/
-citybikes.db
+
 config.json
-.idea/misc.xml
+
+citybikes.db
 data
+
