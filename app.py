@@ -1,7 +1,7 @@
 import json
 import logging
 
-from telegram.ext import *
+from telegram.ext import Updater
 
 from helpBot import help_handler, start_handler
 from stationBot import location_info_handler
