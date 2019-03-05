@@ -14,8 +14,9 @@ def get_nearby_station_info(loc):
 def get_home_station_info(user_id, loc):
     logger.info("get_home_station_info")
     home_station = None
-    if persistance.get_setting(user_id, 'home_station') is not None:
-        home_station = stationAPI.get_station_by_id(persistance.get_setting(user_id, 'home_station'))
+    home_station_id = persistance.get_setting(user_id, 'home_station')
+    if home_station_id is not None:
+        home_station = stationAPI.get_station_by_id(home_station_id)
         home_station.calculate_distance(loc)
     logger.info(home_station)
     return home_station
