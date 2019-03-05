@@ -1,10 +1,8 @@
 import datetime
 import logging
-from operator import attrgetter
 
 import requests
 import xmltodict
-from geopy import distance
 
 from utils import Location
 
@@ -21,16 +19,9 @@ def get_all_stations():
     if datetime.datetime.now() > last_cached + cache_time:
         r = requests.get('http://dynamisch.citybikewien.at/citybike_xml.php')
         logger.info("Request Station Data from API")
-        station_cache = xmltodict.parse(r.content)['stations']['station']
+        station_cache = [Station(s) for s in xmltodict.parse(r.content)['stations']['station']]
         last_cached = datetime.datetime.now()
-    return [Station(s) for s in station_cache]
-
-
-def get_nearest_stations(loc, n):
-    logger.info("get_nearest_stations")
-    stations = get_all_stations()
-    [s.calculate_distance(loc) for s in stations]
-    return sorted(stations, key=attrgetter('distance'))[:n]
+    return station_cache
 
 
 def get_station_by_id(id):
@@ -42,6 +33,13 @@ def get_station_by_id(id):
         return None
 
 
+def get_nearest_stations(loc, n):
+    logger.info("get_nearest_stations")
+    stations = get_all_stations()
+    station_distance_pairs = [(s, s.loc.distance(loc)) for s in stations]
+    return sorted(station_distance_pairs, key=lambda x: x[1])[:n]
+
+
 class Station:
     def __init__(self, s):
         self.id = int(s['id'])
@@ -49,7 +47,3 @@ class Station:
         self.free_boxes = int(s['free_boxes'])
         self.free_bikes = int(s['free_bikes'])
         self.loc = Location(s['latitude'], s['longitude'])
-        self.distance = None
-
-    def calculate_distance(self, loc):
-        self.distance = distance.distance((loc.lat, loc.lon), (self.loc.lat, self.loc.lon)).meters

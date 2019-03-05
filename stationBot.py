@@ -13,14 +13,15 @@ def get_nearby_stations(update, context):
     if update.message:
         logger.info("%s: request for location info in chat " % update.message.chat_id)
         nearby = stationService.get_nearby_station_info(get_location_from_update(update))
-        nearby_text = [station_to_text(s) for s in nearby]
+        nearby_text = [station_to_text(s, dis) for s, dis in nearby]
         reply_function(update, context)("\n\n".join(nearby_text))
 
-        home_station = stationService.get_home_station_info(update.message.chat_id, get_location_from_update(update))
+        home_station, distance = stationService.get_home_station_info(update.message.chat_id,
+                                                                      get_location_from_update(update))
         if home_station is None:
             reply_function(update, context)("No home station set.\nUse /sethome to set it")
         else:
-            reply_function(update, context)("*Your Home Station:*\n" + station_to_text(home_station))
+            reply_function(update, context)("*Your Home Station:*\n" + station_to_text(home_station, distance))
     return -1
 
 
@@ -36,8 +37,8 @@ def set_home(update, context):
         return invalid_message(update, context)
 
     logger.info("%s: sent home location" % update.message.chat_id)
-    home_station = stationService.set_home(update.message.chat_id, get_location_from_update(update))
-    reply_function(update, context)("*Home set to:*\n" + station_to_text(home_station))
+    home_station, distance = stationService.set_home(update.message.chat_id, get_location_from_update(update))
+    reply_function(update, context)("*Home set to:*\n" + station_to_text(home_station, distance))
     return -1
 
 

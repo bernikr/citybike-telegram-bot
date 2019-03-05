@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from geopy import distance
 from telegram import ReplyKeyboardRemove
 
 logger = logging.getLogger(__name__)
@@ -25,3 +26,6 @@ class Location:
     def __init__(self, lat, lon):
         self.lat = float(lat)
         self.lon = float(lon)
+
+    def distance(self, other_loc):
+        return distance.distance((self.lat, self.lon), (other_loc.lat, other_loc.lon)).meters
