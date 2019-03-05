@@ -6,12 +6,14 @@ from telegram.ext import Updater
 from helpBot import help_handler, start_handler
 from stationBot import location_info_handler
 
+logger = logging.getLogger(__name__)
+
 
 def main():
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
     with open('config.json') as f:
         config = json.load(f)
+
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
     updater = Updater(config['bot_token'], use_context=True)
     dp = updater.dispatcher
@@ -19,6 +21,7 @@ def main():
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
     updater.start_polling()
+    logger.info("Bot started")
     updater.idle()
 
 
