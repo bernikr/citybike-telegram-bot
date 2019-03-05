@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from telegram import ReplyKeyboardRemove
 
 
 def normalize_umlauts(text):
@@ -6,6 +7,13 @@ def normalize_umlauts(text):
     for char in chars:
         text = text.replace(char, chars[char])
     return text
+
+
+def reply_function(update, context):
+    def reply(text):
+        context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode="Markdown",
+                                 disable_web_page_preview=True, reply_markup=ReplyKeyboardRemove())
+    return reply
 
 
 class Location:

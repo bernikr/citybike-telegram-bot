@@ -3,6 +3,7 @@ import logging
 
 from telegram.ext import *
 
+from helpBot import help_handler, start_handler
 from stationBot import location_info_handler
 
 
@@ -15,6 +16,8 @@ def main():
     updater = Updater(config['bot_token'], use_context=True)
     dp = updater.dispatcher
     dp.add_handler(location_info_handler)
+    dp.add_handler(start_handler)
+    dp.add_handler(help_handler)
     updater.start_polling()
     updater.idle()
 
