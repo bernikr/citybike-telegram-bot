@@ -3,7 +3,7 @@ import logging
 
 from telegram.ext import *
 
-from location_info import location_info_handler
+from stationBot import location_info_handler
 
 
 def main():

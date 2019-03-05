@@ -6,3 +6,9 @@ def normalize_umlauts(text):
     for char in chars:
         text = text.replace(char, chars[char])
     return text
+
+
+class Location:
+    def __init__(self, lat, lon):
+        self.lat = float(lat)
+        self.lon = float(lon)
