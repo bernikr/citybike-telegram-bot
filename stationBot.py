@@ -1,20 +1,21 @@
 from telegram.ext import MessageHandler, Filters, ConversationHandler, CommandHandler
 
 import stationService
+from stationMapper import station_to_text
 from utils import Location, reply_function
 
 
 def get_nearby_stations(update, context):
     if update.message:
         nearby = stationService.get_nearby_station_info(get_location_from_update(update))
-        nearby_text = [s.formatted_string() for s in nearby]
+        nearby_text = [station_to_text(s) for s in nearby]
         reply_function(update, context)("\n\n".join(nearby_text))
 
         home_station = stationService.get_home_station_info(update.message.chat_id, get_location_from_update(update))
         if home_station is None:
             reply_function(update, context)("No home station set.\nUse /sethome to set it")
         else:
-            reply_function(update, context)("*Your Home Station:*\n" + home_station.formatted_string())
+            reply_function(update, context)("*Your Home Station:*\n" + station_to_text(home_station))
     return -1
 
 
@@ -29,7 +30,7 @@ def set_home(update, context):
         return invalid_message(update, context)
 
     home_station = stationService.set_home(update.message.chat_id, get_location_from_update(update))
-    reply_function(update, context)("*Home set to:*\n" + home_station.formatted_string())
+    reply_function(update, context)("*Home set to:*\n" + station_to_text(home_station))
     return -1
 
 

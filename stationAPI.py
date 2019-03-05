@@ -37,31 +37,3 @@ class Station:
 
     def calculate_distance(self, loc):
         self.distance = distance.distance((loc.lat, loc.lon), (self.loc.lat, self.loc.lon)).meters
-
-    def formatted_string(self):
-        station_text = "[{s.name}](http://maps.google.com/maps?q={s.loc.lat},{s.loc.lon}){distance_text}\n" \
-                       "{free_bikes_emoji} Bikes (*{s.free_bikes}*)\n" \
-                       "{free_boxes_emoji} Slots (*{s.free_boxes}*)"
-        return station_text.format(
-            s=self,
-            free_bikes_emoji=self.count_to_emoji(self.free_bikes),
-            free_boxes_emoji=self.count_to_emoji(self.free_boxes),
-            distance_text=self.distance_text()
-        )
-
-    @staticmethod
-    def count_to_emoji(i):
-        if i == 0:
-            return "❌"
-        if i <= 5:
-            return "⚠️"
-        else:
-            return "✅"
-
-    def distance_text(self):
-        if self.distance is None:
-            return ""
-        elif self.distance < 1000:
-            return " (%dm)" % self.distance
-        else:
-            return " (%0.1fkm)" % (self.distance / 1000)
