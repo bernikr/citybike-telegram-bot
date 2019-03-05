@@ -10,3 +10,4 @@ config.json
 
 citybikes.db
 data.json
+logs/
