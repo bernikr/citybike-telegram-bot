@@ -1,3 +1,4 @@
+import datetime
 from operator import attrgetter
 
 import requests
@@ -6,10 +7,18 @@ from geopy import distance
 
 from utils import Location
 
+station_cache = []
+last_cached = datetime.datetime.min
+cache_time = datetime.timedelta(seconds=10)
+
 
 def get_all_stations():
-    r = requests.get('http://dynamisch.citybikewien.at/citybike_xml.php')
-    return [Station(s) for s in xmltodict.parse(r.content)['stations']['station']]
+    global station_cache, last_cached, cache_time
+    if datetime.datetime.now() > last_cached + cache_time:
+        r = requests.get('http://dynamisch.citybikewien.at/citybike_xml.php')
+        station_cache = xmltodict.parse(r.content)['stations']['station']
+        last_cached = datetime.datetime.now()
+    return [Station(s) for s in station_cache]
 
 
 def get_nearest_stations(loc, n):
