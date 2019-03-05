@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+from logging.handlers import TimedRotatingFileHandler
 
 from telegram.ext import Updater
 
@@ -13,7 +15,14 @@ def main():
     with open('config.json') as f:
         config = json.load(f)
 
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+    directory = os.path.dirname('logs/')
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    handler = TimedRotatingFileHandler("logs/bot.log", when="midnight", interval=1)
+    handler.setLevel(logging.INFO)
+    handler.suffix = "%Y-%m-%d"
+    logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                        level=logging.INFO, handlers=[handler, logging.StreamHandler()])
 
     updater = Updater(config['bot_token'], use_context=True)
     dp = updater.dispatcher
