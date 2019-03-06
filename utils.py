@@ -16,7 +16,6 @@ def normalize_umlauts(text):
 
 def reply_function(update, context):
     def reply(text):
-        logging.info(" %s: Sent Message: %s" % (update.message.chat_id, text))
         context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode="Markdown",
                                  disable_web_page_preview=True, reply_markup=ReplyKeyboardRemove())
     return reply
