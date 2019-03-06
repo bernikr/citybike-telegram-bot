@@ -4,7 +4,8 @@ from telegram.ext import MessageHandler, Filters, ConversationHandler, CommandHa
 
 import stationService
 from stationMapper import station_to_text
-from utils import Location, reply_function
+from utils import reply_function
+from entities import Location
 
 logger = logging.getLogger(__name__)
 
