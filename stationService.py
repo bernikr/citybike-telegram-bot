@@ -30,3 +30,8 @@ def set_home(user_id, loc):
 def delete_home(user_id):
     logger.info("delete_home")
     persistance.set_setting(user_id, 'home_station', None)
+
+
+def update_station_data():
+    logger.info("update_station_data")
+    persistance.save_stations_data(stationAPI.get_all_stations_live())

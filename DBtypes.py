@@ -18,19 +18,6 @@ class User(Base):
         return "<User(id='%s', username='%s'>" % (self.id, self.username)
 
 
-class Station(Base):
-    __tablename__ = 'station'
-
-    id      = Column(types.Integer, primary_key=True)
-    name    = Column(types.String, unique=True, nullable=False)
-    bezirk  = Column(types.Integer)
-    lat     = Column(types.Float)
-    lon     = Column(types.Float)
-
-    def __repr__(self):
-        return "<Station(id='%s', name='%s'>" % (self.id, self.name)
-
-
 class Ride(Base):
     __tablename__ = 'ride'
 
