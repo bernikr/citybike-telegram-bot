@@ -1,42 +1,54 @@
 import json
 import logging
-import os
 
-DATA_FILE = "data.json"
+from sqlalchemy import Column, types, create_engine, PrimaryKeyConstraint
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 logger = logging.getLogger(__name__)
+Base = declarative_base()
 
-if os.path.isfile(DATA_FILE):
-    with open(DATA_FILE) as f:
-        data = json.load(f)
-else:
-    data = {}
+db_engine = create_engine('sqlite:///citybikes.db')
+DB = scoped_session(sessionmaker(bind=db_engine))
 
 
-def write_data():
-    logging.info("write_data")
-    logging.info(data)
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f)
+#################
+# User Settings #
+#################
+class UserSetting(Base):
+    __tablename__ = 'user_setting'
+
+    user_id = Column(types.Integer)
+    setting = Column(types.String)
+    value = Column(types.String)
+
+    __table_args__ = (PrimaryKeyConstraint('user_id', 'setting'),)
 
 
 def set_setting(user_id, setting, value):
     logging.info("set_setting, user: %s, %s: %s" % (user_id, setting, value))
-    user_id = str(user_id)
+    user_id = int(user_id)
     setting = str(setting)
+    value = json.dumps(value)
 
-    if user_id not in data:
-        data[user_id] = {}
-    data[user_id][setting] = value
-    write_data()
+    session = DB()
+    session.merge(UserSetting(user_id=user_id, setting=setting, value=value))
+    session.commit()
 
 
 def get_setting(user_id, setting):
     logging.info("get_setting, user: %s, %s" % (user_id, setting))
-    user_id = str(user_id)
+    user_id = int(user_id)
     setting = str(setting)
 
-    if user_id not in data or setting not in data[user_id]:
+    session = DB()
+    setting = session.query(UserSetting).filter(UserSetting.user_id == user_id, UserSetting.setting == setting).first()
+    if setting is None:
         return None
     else:
-        return data[user_id][setting]
+        return json.loads(setting.value)
+
+
+####
+# Create all database tables on load
+Base.metadata.create_all(db_engine)
