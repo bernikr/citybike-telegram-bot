@@ -56,7 +56,8 @@ public class StationAPI {
             throw new ApiException("API format error: Station contains more than one of a child node");
         Map<String, String> values = nodes.stream()
                 .map(l -> l.get(0))
-                .collect(Collectors.toMap(Node::getNodeName, Node::getTextContent));
+                .collect(Collectors.toMap(Node::getNodeName,
+                        n -> n.getTextContent().trim().replaceAll("\n\\s+", "\n")));
         try {
             return new Station(
                     Integer.valueOf(values.get("id")),
