@@ -3,18 +3,18 @@ package com.kralofsky.citybikes.citybikeAPI;
 import java.util.Objects;
 
 public class Station {
-    Integer id;
-    Integer internal_id;
-    String name;
-    Integer boxes;
-    Integer free_boxes;
-    Integer free_bikes;
-    String status;
-    String description;
-    Double latitude;
-    Double longitude;
+    private Integer id;
+    private Integer internal_id;
+    private String name;
+    private Integer boxes;
+    private Integer free_boxes;
+    private Integer free_bikes;
+    private Status status;
+    private String description;
+    private Double latitude;
+    private Double longitude;
 
-    public Station(Integer id, Integer internal_id, String name, Integer boxes, Integer free_boxes, Integer free_bikes, String status, String description, Double latitude, Double longitude) {
+    Station(Integer id, Integer internal_id, String name, Integer boxes, Integer free_boxes, Integer free_bikes, Status status, String description, Double latitude, Double longitude) {
         this.id = id;
         this.internal_id = internal_id;
         this.name = name;
@@ -51,7 +51,7 @@ public class Station {
         return free_bikes;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -103,5 +103,9 @@ public class Station {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
+    }
+
+    public enum Status {
+        ACTIVE, INOPERATIVE, UNDER_CONSTRUCTION;
     }
 }

@@ -51,13 +51,26 @@ public class StationAPI {
                     Integer.valueOf(values.get("boxes")),
                     Integer.valueOf(values.get("free_boxes")),
                     Integer.valueOf(values.get("free_bikes")),
-                    values.get("status"),
+                    statusFromString(values.get("status")),
                     values.get("description"),
                     Double.valueOf(values.get("latitude")),
                     Double.valueOf(values.get("longitude"))
             );
         } catch (NullPointerException | NumberFormatException e) {
             throw new ApiException("API format error: missing fields", e);
+        }
+    }
+
+    private static Station.Status statusFromString(String s) throws ApiException {
+        switch (s) {
+            case "aktiv":
+                return Station.Status.ACTIVE;
+            case "nicht in Betrieb":
+                return Station.Status.INOPERATIVE;
+            case "in Bau":
+                return Station.Status.UNDER_CONSTRUCTION;
+            default:
+                throw new ApiException("API Error: Unknown Status '" + s + "'");
         }
     }
 }
