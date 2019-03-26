@@ -1,7 +1,11 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
-public class ApiException extends RuntimeException {
-    public ApiException(String s) {
-        super(s);
+public class ApiException extends Exception {
+    public ApiException(String message) {
+        super(message);
+    }
+
+    public ApiException(String message, Exception e) {
+        super(message, e);
     }
 }
