@@ -10,7 +10,8 @@ config.json
 
 citybikes.db
 data.json
-logs/
+
+log/
 
 # Gradle
 .gradle
@@ -20,4 +21,9 @@ gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+# java out directory
 out/
+
+# config file containing the bot token
+application.yml
