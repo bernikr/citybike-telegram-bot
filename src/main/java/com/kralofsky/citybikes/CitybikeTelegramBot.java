@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.Location;
 
+import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
 import static org.telegram.abilitybots.api.objects.Locality.USER;
-import static org.telegram.abilitybots.api.objects.Privacy.ADMIN;
+import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 
 @Component
@@ -30,16 +31,16 @@ public class CitybikeTelegramBot extends AbilityBot {
         return values.getCreatorId();
     }
 
-    public Ability sayHelloWorld() {
-        return Ability
-                .builder()
-                .name("hello")
-                .info("says hello world!")
-                .input(0)
+    public Ability getLocationInformation() {
+        return Ability.builder()
+                .name(DEFAULT)
+                .flag(LOCATION)
                 .locality(USER)
-                .privacy(ADMIN)
-                .action(ctx -> silent.send("Hello world!", ctx.chatId()))
-                .post(ctx -> silent.send("Bye world!", ctx.chatId()))
+                .privacy(PUBLIC)
+                .action(ctx -> {
+                    Location asd = ctx.update().getMessage().getLocation();
+                    silent.send(asd.toString(), ctx.chatId());
+                })
                 .build();
     }
 }
