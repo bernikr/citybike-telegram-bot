@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,13 +18,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class StationAPI {
-    private static String API_PATH = "http://dynamisch.citybikewien.at/citybike_xml.php";
+    private final static String API_PATH = "http://dynamisch.citybikewien.at/citybike_xml.php";
+    private URL apiURL;
 
-    public static Collection<Station> getAllStations() throws ApiException {
+    public StationAPI() {
+        try {
+            apiURL = new URL(API_PATH);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public StationAPI(URL url) {
+        apiURL = url;
+    }
+
+    public Collection<Station> getAllStations() throws ApiException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
-            Document doc = factory.newDocumentBuilder().parse(new URL(API_PATH).openStream());
+            Document doc = factory.newDocumentBuilder().parse(apiURL.openStream());
             Element root = doc.getDocumentElement();
 
             List<Station> stationList = new ArrayList<>();
@@ -36,8 +50,8 @@ public class StationAPI {
         }
     }
 
-    private static Station nodeToStation(Node n) throws ApiException {
-        Collection<List<Node>> nodes = XmlUtil.asMap(n.getChildNodes()).values();
+    private Station nodeToStation(Node node) throws ApiException {
+        Collection<List<Node>> nodes = XmlUtil.asMap(node.getChildNodes()).values();
         if(nodes.stream().anyMatch(l -> l.size() > 1))
             throw new ApiException("API format error: Station contains more than one of a child node");
         Map<String, String> values = nodes.stream()
@@ -61,7 +75,7 @@ public class StationAPI {
         }
     }
 
-    private static Station.Status statusFromString(String s) throws ApiException {
+    private Station.Status statusFromString(String s) throws ApiException {
         switch (s) {
             case "aktiv":
                 return Station.Status.ACTIVE;
