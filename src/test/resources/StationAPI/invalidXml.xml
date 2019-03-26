@@ -1,0 +1,14 @@
+<stations
+    <station>
+        <id>108</id>
+        <internal_id>1026</internal_id>
+        <name>Friedrich Schmidtplatz</name>
+        <boxes>35</boxes>
+        <free_boxes>30</free_boxes>
+        <free_bikes>5</free_bikes>
+        <status>aktiv</status>
+        <description>Ecke Lichtenfelsgasse U2 Station Rathaus</description>
+        <latitude>48.210425</latitude>
+        <longitude>16.356100</longitude>
+    </station>
+</stations>
