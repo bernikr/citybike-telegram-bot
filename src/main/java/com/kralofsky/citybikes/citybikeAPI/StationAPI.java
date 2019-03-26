@@ -20,20 +20,20 @@ public class StationAPI {
     private static String API_PATH = "http://dynamisch.citybikewien.at/citybike_xml.php";
 
     public static Collection<Station> getAllStations() throws ApiException {
-        Element root;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             Document doc = factory.newDocumentBuilder().parse(new URL(API_PATH).openStream());
-            root = doc.getDocumentElement();
+            Element root = doc.getDocumentElement();
+
+            List<Station> stationList = new ArrayList<>();
+            for (Node n: XmlUtil.asList(root.getElementsByTagName("station"))) {
+                stationList.add(nodeToStation(n));
+            }
+            return stationList;
         } catch (ParserConfigurationException | IOException | SAXException e) {
             throw new ApiException(e.getMessage(), e);
         }
-        List<Station> stationList = new ArrayList<>();
-        for (Node n: XmlUtil.asList(root.getElementsByTagName("station"))) {
-            stationList.add(nodeToStation(n));
-        }
-        return stationList;
     }
 
     private static Station nodeToStation(Node n) throws ApiException {
