@@ -30,10 +30,10 @@ public class MessageFormatter {
         msg.add("lon", stationInfo.getLocation().getLongitude());
         msg.add("distance_exists", stationInfo.getDistance()!=null);
         msg.add("distance", d);
-        msg.add("free_bikes", stationInfo.getFree_bikes());
-        msg.add("free_boxes", stationInfo.getFree_boxes());
-        msg.add("free_bikes_emoji", countToEmoji(stationInfo.getFree_bikes()));
-        msg.add("free_boxes_emoji", countToEmoji(stationInfo.getFree_boxes()));
+        msg.add("free_bikes", stationInfo.getFreeBikes());
+        msg.add("free_boxes", stationInfo.getFreeBoxes());
+        msg.add("free_bikes_emoji", countToEmoji(stationInfo.getFreeBikes()));
+        msg.add("free_boxes_emoji", countToEmoji(stationInfo.getFreeBoxes()));
 
         return msg.render();
     }

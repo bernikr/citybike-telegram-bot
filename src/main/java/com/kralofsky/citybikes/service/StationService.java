@@ -47,6 +47,6 @@ public class StationService implements IStationService {
     private StationInfo stationToStationInfo(Station station, Location loc) {
         Location stationLoc = new Location(station.getLatitude(), station.getLongitude());
         Double distance = LocationTools.calculateDistance(loc, stationLoc);
-        return new StationInfo(station.getName(), station.getFree_boxes(), station.getFree_bikes(), stationLoc, distance);
+        return new StationInfo(station.getName(), station.getFreeBoxes(), station.getFreeBikes(), stationLoc, distance);
     }
 }

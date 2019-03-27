@@ -1,10 +1,10 @@
 <stations>
     <station>
         <id>108</id>
-        <internal_id>1026</internal_id>
+        <internalId>1026</internalId>
         <name>Friedrich Schmidtplatz</name>
         <boxes>35</boxes>
-        <free_boxes>30</free_boxes>
+        <freeBoxes>30</freeBoxes>
         <status>aktiv</status>
         <description>Ecke Lichtenfelsgasse U2 Station Rathaus</description>
         <latitude>48.210425</latitude>

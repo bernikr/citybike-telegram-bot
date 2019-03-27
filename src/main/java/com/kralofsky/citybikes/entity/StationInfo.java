@@ -1,27 +1,26 @@
 package com.kralofsky.citybikes.entity;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class StationInfo {
     private String name;
-    private Integer free_boxes;
-    private Integer free_bikes;
+    private Integer freeBoxes;
+    private Integer freeBikes;
     private Location location;
     private Double distance;
 
-    public StationInfo(String name, Integer free_boxes, Integer free_bikes, Location location, Double distance) {
+    public StationInfo(String name, Integer freeBoxes, Integer freeBikes, Location location, Double distance) {
         this.name = name;
-        this.free_boxes = free_boxes;
-        this.free_bikes = free_bikes;
+        this.freeBoxes = freeBoxes;
+        this.freeBikes = freeBikes;
         this.location = location;
         this.distance = distance;
     }
 
-    public StationInfo(String name, Integer free_boxes, Integer free_bikes, Location location) {
+    public StationInfo(String name, Integer freeBoxes, Integer freeBikes, Location location) {
         this.name = name;
-        this.free_boxes = free_boxes;
-        this.free_bikes = free_bikes;
+        this.freeBoxes = freeBoxes;
+        this.freeBikes = freeBikes;
         this.location = location;
     }
 
@@ -33,20 +32,20 @@ public class StationInfo {
         this.name = name;
     }
 
-    public Integer getFree_boxes() {
-        return free_boxes;
+    public Integer getFreeBoxes() {
+        return freeBoxes;
     }
 
-    public void setFree_boxes(Integer free_boxes) {
-        this.free_boxes = free_boxes;
+    public void setFreeBoxes(Integer freeBoxes) {
+        this.freeBoxes = freeBoxes;
     }
 
-    public Integer getFree_bikes() {
-        return free_bikes;
+    public Integer getFreeBikes() {
+        return freeBikes;
     }
 
-    public void setFree_bikes(Integer free_bikes) {
-        this.free_bikes = free_bikes;
+    public void setFreeBikes(Integer freeBikes) {
+        this.freeBikes = freeBikes;
     }
 
     public Location getLocation() {
@@ -71,23 +70,23 @@ public class StationInfo {
         if (o == null || getClass() != o.getClass()) return false;
         StationInfo that = (StationInfo) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(free_boxes, that.free_boxes) &&
-                Objects.equals(free_bikes, that.free_bikes) &&
+                Objects.equals(freeBoxes, that.freeBoxes) &&
+                Objects.equals(freeBikes, that.freeBikes) &&
                 Objects.equals(location, that.location) &&
                 Objects.equals(distance, that.distance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, free_boxes, free_bikes, location, distance);
+        return Objects.hash(name, freeBoxes, freeBikes, location, distance);
     }
 
     @Override
     public String toString() {
         return "StationInfo{" +
                 "name='" + name + '\'' +
-                ", free_boxes=" + free_boxes +
-                ", free_bikes=" + free_bikes +
+                ", freeBoxes=" + freeBoxes +
+                ", freeBikes=" + freeBikes +
                 ", location=" + location +
                 ", distance=" + distance +
                 '}';

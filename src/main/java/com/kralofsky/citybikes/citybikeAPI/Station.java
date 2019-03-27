@@ -4,23 +4,23 @@ import java.util.Objects;
 
 public class Station {
     private Integer id;
-    private Integer internal_id;
+    private Integer internalId;
     private String name;
     private Integer boxes;
-    private Integer free_boxes;
-    private Integer free_bikes;
+    private Integer freeBoxes;
+    private Integer freeBikes;
     private Status status;
     private String description;
     private Double latitude;
     private Double longitude;
 
-    Station(Integer id, Integer internal_id, String name, Integer boxes, Integer free_boxes, Integer free_bikes, Status status, String description, Double latitude, Double longitude) {
+    Station(Integer id, Integer internalId, String name, Integer boxes, Integer freeBoxes, Integer freeBikes, Status status, String description, Double latitude, Double longitude) {
         this.id = id;
-        this.internal_id = internal_id;
+        this.internalId = internalId;
         this.name = name;
         this.boxes = boxes;
-        this.free_boxes = free_boxes;
-        this.free_bikes = free_bikes;
+        this.freeBoxes = freeBoxes;
+        this.freeBikes = freeBikes;
         this.status = status;
         this.description = description;
         this.latitude = latitude;
@@ -31,8 +31,8 @@ public class Station {
         return id;
     }
 
-    public Integer getInternal_id() {
-        return internal_id;
+    public Integer getInternalId() {
+        return internalId;
     }
 
     public String getName() {
@@ -43,12 +43,12 @@ public class Station {
         return boxes;
     }
 
-    public Integer getFree_boxes() {
-        return free_boxes;
+    public Integer getFreeBoxes() {
+        return freeBoxes;
     }
 
-    public Integer getFree_bikes() {
-        return free_bikes;
+    public Integer getFreeBikes() {
+        return freeBikes;
     }
 
     public Status getStatus() {
@@ -73,11 +73,11 @@ public class Station {
         if (o == null || getClass() != o.getClass()) return false;
         Station station = (Station) o;
         return Objects.equals(id, station.id) &&
-                Objects.equals(internal_id, station.internal_id) &&
+                Objects.equals(internalId, station.internalId) &&
                 Objects.equals(name, station.name) &&
                 Objects.equals(boxes, station.boxes) &&
-                Objects.equals(free_boxes, station.free_boxes) &&
-                Objects.equals(free_bikes, station.free_bikes) &&
+                Objects.equals(freeBoxes, station.freeBoxes) &&
+                Objects.equals(freeBikes, station.freeBikes) &&
                 Objects.equals(status, station.status) &&
                 Objects.equals(description, station.description) &&
                 Objects.equals(latitude, station.latitude) &&
@@ -86,18 +86,18 @@ public class Station {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, internal_id, name, boxes, free_boxes, free_bikes, status, description, latitude, longitude);
+        return Objects.hash(id, internalId, name, boxes, freeBoxes, freeBikes, status, description, latitude, longitude);
     }
 
     @Override
     public String toString() {
         return "Station{" +
                 "id=" + id +
-                ", internal_id=" + internal_id +
+                ", internalId=" + internalId +
                 ", name='" + name + '\'' +
                 ", boxes=" + boxes +
-                ", free_boxes=" + free_boxes +
-                ", free_bikes=" + free_bikes +
+                ", freeBoxes=" + freeBoxes +
+                ", freeBikes=" + freeBikes +
                 ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
                 ", latitude=" + latitude +
