@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
 import static org.telegram.abilitybots.api.objects.Locality.USER;
@@ -46,9 +47,12 @@ public class CitybikeTelegramBot extends AbilityBot {
                 .privacy(PUBLIC)
                 .action(ctx -> {
                     Location l = BotEntitiesMapper.botLocationtoLocationEntity(ctx.update().getMessage().getLocation());
-                    silent.send(
-                            MessageFormatter.getStationInfoMessage(stationService.getNearbyStationInfos(l)),
-                            ctx.chatId()
+
+                    silent.execute(new SendMessage()
+                            .setChatId(ctx.chatId())
+                            .setText(MessageFormatter.getStationInfoMessage(stationService.getNearbyStationInfos(l)))
+                            .enableMarkdown(true)
+                            .disableWebPagePreview()
                     );
                 }).build();
     }

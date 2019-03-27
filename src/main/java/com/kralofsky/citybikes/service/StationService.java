@@ -32,7 +32,7 @@ public class StationService implements IStationService {
         try {
             List<StationInfo> result = stationAPI.getAllStations().stream()
                     .map(station -> stationToStationInfo(station, loc))
-                    .sorted(Comparator.comparingDouble(s->s.getDistance().get()))
+                    .sorted(Comparator.comparingDouble(s->s.getDistance()))
                     .limit(3)
                     .collect(Collectors.toList());
             LOGGER.debug(result.toString());
@@ -45,7 +45,8 @@ public class StationService implements IStationService {
     }
 
     private StationInfo stationToStationInfo(Station station, Location loc) {
-        Double distance = LocationTools.calculateDistance(loc, new Location(station.getLatitude(), station.getLongitude()));
-        return new StationInfo(station.getName(), station.getFree_boxes(), station.getFree_bikes(), distance);
+        Location stationLoc = new Location(station.getLatitude(), station.getLongitude());
+        Double distance = LocationTools.calculateDistance(loc, stationLoc);
+        return new StationInfo(station.getName(), station.getFree_boxes(), station.getFree_bikes(), stationLoc, distance);
     }
 }
