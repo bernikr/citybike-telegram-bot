@@ -27,3 +27,5 @@ out/
 
 # config file containing the bot token
 application.yml
+
+bot.db

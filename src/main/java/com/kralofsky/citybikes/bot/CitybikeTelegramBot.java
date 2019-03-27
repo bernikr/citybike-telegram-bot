@@ -4,13 +4,13 @@ import com.kralofsky.citybikes.bot.util.BotEntitiesMapper;
 import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.config.Values;
 import com.kralofsky.citybikes.entity.Location;
-import com.kralofsky.citybikes.entity.StationInfo;
 import com.kralofsky.citybikes.service.IStationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
+import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -27,8 +27,8 @@ public class CitybikeTelegramBot extends AbilityBot {
     private IStationService stationService;
 
     @Autowired
-    public CitybikeTelegramBot(Values values, IStationService stationService) {
-        super(values.getBotToken(), values.getBotUsername());
+    public CitybikeTelegramBot(Values values, IStationService stationService, DBContext dbContext) {
+        super(values.getBotToken(), values.getBotUsername(), dbContext);
         this.values = values;
         this.stationService = stationService;
         LOGGER.info("created bot " + values.getBotToken() + " " + values.getBotUsername());
