@@ -1,6 +1,7 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
 
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Component
 public class StationAPI {
     private final static String API_PATH = "http://dynamisch.citybikewien.at/citybike_xml.php";
     private URL apiURL;

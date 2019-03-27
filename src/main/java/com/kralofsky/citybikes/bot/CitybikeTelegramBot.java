@@ -1,13 +1,18 @@
-package com.kralofsky.citybikes;
+package com.kralofsky.citybikes.bot;
 
+import com.kralofsky.citybikes.bot.util.BotTypeMapper;
 import com.kralofsky.citybikes.config.Values;
+import com.kralofsky.citybikes.entity.Location;
+import com.kralofsky.citybikes.entity.StationInfo;
+import com.kralofsky.citybikes.service.IStationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
-import org.telegram.telegrambots.meta.api.objects.Location;
+
+import java.util.List;
 
 import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
 import static org.telegram.abilitybots.api.objects.Locality.USER;
@@ -17,12 +22,15 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 @Component
 public class CitybikeTelegramBot extends AbilityBot {
     private static final Logger LOGGER = LoggerFactory.getLogger(CitybikeTelegramBot.class);
+
     private Values values;
+    private IStationService stationService;
 
     @Autowired
-    public CitybikeTelegramBot(Values values) {
+    public CitybikeTelegramBot(Values values, IStationService stationService) {
         super(values.getBotToken(), values.getBotUsername());
         this.values = values;
+        this.stationService = stationService;
         LOGGER.info("created bot " + values.getBotToken() + " " + values.getBotUsername());
     }
 
@@ -38,9 +46,17 @@ public class CitybikeTelegramBot extends AbilityBot {
                 .locality(USER)
                 .privacy(PUBLIC)
                 .action(ctx -> {
-                    Location asd = ctx.update().getMessage().getLocation();
-                    silent.send(asd.toString(), ctx.chatId());
+                    List<StationInfo> info = stationService.getNearbyStationInfos(
+                            BotTypeMapper.botLocationtoLocationEntity(
+                                    ctx.update().getMessage().getLocation()
+                            )
+                    );
+                    silent.send(info.stream().map(this::stationInfoToString).reduce("", (a, b)->a+"\n"+b), ctx.chatId());
                 })
                 .build();
+    }
+
+    private String stationInfoToString(StationInfo s) {
+        return s.toString();
     }
 }
