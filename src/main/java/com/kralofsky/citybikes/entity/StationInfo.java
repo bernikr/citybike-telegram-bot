@@ -7,9 +7,9 @@ public class StationInfo {
     private String name;
     private Integer free_boxes;
     private Integer free_bikes;
-    private Integer distance;
+    private Double distance;
 
-    public StationInfo(String name, Integer free_boxes, Integer free_bikes, Integer distance) {
+    public StationInfo(String name, Integer free_boxes, Integer free_bikes, Double distance) {
         this.name = name;
         this.free_boxes = free_boxes;
         this.free_bikes = free_bikes;
@@ -46,12 +46,12 @@ public class StationInfo {
         this.free_bikes = free_bikes;
     }
 
-    public Optional<Integer> getDistance() {
+    public Optional<Double> getDistance() {
         if(distance==null) return Optional.empty();
         else return Optional.of(distance);
     }
 
-    public void setDistance(Integer distance) {
+    public void setDistance(Double distance) {
         this.distance = distance;
     }
 

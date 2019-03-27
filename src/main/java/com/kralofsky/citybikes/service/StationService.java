@@ -5,11 +5,13 @@ import com.kralofsky.citybikes.citybikeAPI.Station;
 import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.StationInfo;
+import com.kralofsky.citybikes.util.LocationTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,8 +30,11 @@ public class StationService implements IStationService {
     public List<StationInfo> getNearbyStationInfos(Location loc) {
         LOGGER.debug("Get StationInfos around Location " + loc);
         try {
-            // TODO: sort stations by distance
-            List<StationInfo> result = stationAPI.getAllStations().stream().limit(3).map(station -> stationToStationInfo(station, loc)).collect(Collectors.toList());
+            List<StationInfo> result = stationAPI.getAllStations().stream()
+                    .map(station -> stationToStationInfo(station, loc))
+                    .sorted(Comparator.comparingDouble(s->s.getDistance().get()))
+                    .limit(3)
+                    .collect(Collectors.toList());
             LOGGER.debug(result.toString());
             return result;
         } catch (ApiException e) {
@@ -40,7 +45,7 @@ public class StationService implements IStationService {
     }
 
     private StationInfo stationToStationInfo(Station station, Location loc) {
-        Integer distance = null; // TODO: add distance calculation
+        Double distance = LocationTools.calculateDistance(loc, new Location(station.getLatitude(), station.getLongitude()));
         return new StationInfo(station.getName(), station.getFree_boxes(), station.getFree_bikes(), distance);
     }
 }
