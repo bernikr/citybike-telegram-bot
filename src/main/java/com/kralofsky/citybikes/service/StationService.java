@@ -30,13 +30,11 @@ public class StationService implements IStationService {
     public List<StationInfo> getNearbyStationInfos(Location loc) {
         LOGGER.debug("Get StationInfos around Location " + loc);
         try {
-            List<StationInfo> result = stationAPI.getAllStations().stream()
+            return stationAPI.getAllStations().stream()
                     .map(station -> stationToStationInfo(station, loc))
-                    .sorted(Comparator.comparingDouble(s->s.getDistance()))
+                    .sorted(Comparator.comparingDouble(StationInfo::getDistance))
                     .limit(3)
                     .collect(Collectors.toList());
-            LOGGER.debug(result.toString());
-            return result;
         } catch (ApiException e) {
             // TODO: rethrow error
             LOGGER.error(e.toString());
@@ -44,9 +42,33 @@ public class StationService implements IStationService {
         return null;
     }
 
+    @Override
+    public StationInfo getHomeStation(Long chatId, Location loc) {
+        try {
+            // TODO: return the correct station
+            return stationAPI.getAllStations().stream()
+                    .findAny()
+                    .map(station -> stationToStationInfo(station, loc))
+                    .get();
+        } catch (ApiException e) {
+            // TODO: rethrow error
+            LOGGER.error(e.toString());
+        }
+        return null;
+    }
+
+    @Override
+    public StationInfo getHomeStation(Long chatId) {
+        return getHomeStation(chatId, null);
+    }
+
     private StationInfo stationToStationInfo(Station station, Location loc) {
-        Location stationLoc = new Location(station.getLatitude(), station.getLongitude());
-        Double distance = LocationTools.calculateDistance(loc, stationLoc);
+        Location stationLoc = null;
+        Double distance = null;
+        if (loc != null) {
+            stationLoc = new Location(station.getLatitude(), station.getLongitude());
+            distance = LocationTools.calculateDistance(loc, stationLoc);
+        }
         return new StationInfo(station.getName(), station.getFreeBoxes(), station.getFreeBikes(), stationLoc, distance);
     }
 }

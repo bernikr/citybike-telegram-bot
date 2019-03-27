@@ -54,6 +54,12 @@ public class CitybikeTelegramBot extends AbilityBot {
                             .enableMarkdown(true)
                             .disableWebPagePreview()
                     );
+                    silent.execute(new SendMessage()
+                            .setChatId(ctx.chatId())
+                            .setText(MessageFormatter.getStationInfoMessage(stationService.getHomeStation(ctx.chatId(), l)))
+                            .enableMarkdown(true)
+                            .disableWebPagePreview()
+                    );
                 }).build();
     }
 }

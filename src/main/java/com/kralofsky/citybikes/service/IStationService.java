@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface IStationService {
     List<StationInfo> getNearbyStationInfos(Location loc);
+
+    StationInfo getHomeStation(Long chatId, Location loc);
+
+    StationInfo getHomeStation(Long chatId);
 }
