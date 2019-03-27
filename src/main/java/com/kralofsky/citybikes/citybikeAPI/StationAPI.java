@@ -1,6 +1,7 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
 
+import com.kralofsky.citybikes.entity.StationInfo;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -50,6 +51,10 @@ public class StationAPI {
         } catch (ParserConfigurationException | IOException | SAXException e) {
             throw new ApiException(e.getMessage(), e);
         }
+    }
+
+    public Station getById(Integer id) throws ApiException {
+        return getAllStations().stream().filter(s -> s.getId().equals(id)).findAny().orElseThrow(() -> new ApiException("No Station with id " + id + " found"));
     }
 
     private Station nodeToStation(Node node) throws ApiException {

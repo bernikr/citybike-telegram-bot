@@ -3,13 +3,15 @@ package com.kralofsky.citybikes.entity;
 import java.util.Objects;
 
 public class StationInfo {
+    private Integer id;
     private String name;
     private Integer freeBoxes;
     private Integer freeBikes;
     private Location location;
     private Double distance;
 
-    public StationInfo(String name, Integer freeBoxes, Integer freeBikes, Location location, Double distance) {
+    public StationInfo(Integer id, String name, Integer freeBoxes, Integer freeBikes, Location location, Double distance) {
+        this.id = id;
         this.name = name;
         this.freeBoxes = freeBoxes;
         this.freeBikes = freeBikes;
@@ -17,11 +19,20 @@ public class StationInfo {
         this.distance = distance;
     }
 
-    public StationInfo(String name, Integer freeBoxes, Integer freeBikes, Location location) {
+    public StationInfo(Integer id, String name, Integer freeBoxes, Integer freeBikes, Location location) {
+        this.id = id;
         this.name = name;
         this.freeBoxes = freeBoxes;
         this.freeBikes = freeBikes;
         this.location = location;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -69,7 +80,8 @@ public class StationInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StationInfo that = (StationInfo) o;
-        return Objects.equals(name, that.name) &&
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
                 Objects.equals(freeBoxes, that.freeBoxes) &&
                 Objects.equals(freeBikes, that.freeBikes) &&
                 Objects.equals(location, that.location) &&
@@ -78,13 +90,14 @@ public class StationInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, freeBoxes, freeBikes, location, distance);
+        return Objects.hash(id, name, freeBoxes, freeBikes, location, distance);
     }
 
     @Override
     public String toString() {
         return "StationInfo{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", freeBoxes=" + freeBoxes +
                 ", freeBikes=" + freeBikes +
                 ", location=" + location +
