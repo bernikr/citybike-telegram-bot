@@ -1,6 +1,7 @@
 package com.kralofsky.citybikes.bot;
 
-import com.kralofsky.citybikes.bot.util.BotTypeMapper;
+import com.kralofsky.citybikes.bot.util.BotEntitiesMapper;
+import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.config.Values;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.StationInfo;
@@ -11,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
-
-import java.util.List;
 
 import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
 import static org.telegram.abilitybots.api.objects.Locality.USER;
@@ -46,17 +45,11 @@ public class CitybikeTelegramBot extends AbilityBot {
                 .locality(USER)
                 .privacy(PUBLIC)
                 .action(ctx -> {
-                    List<StationInfo> info = stationService.getNearbyStationInfos(
-                            BotTypeMapper.botLocationtoLocationEntity(
-                                    ctx.update().getMessage().getLocation()
-                            )
+                    Location l = BotEntitiesMapper.botLocationtoLocationEntity(ctx.update().getMessage().getLocation());
+                    silent.send(
+                            MessageFormatter.getStationInfoMessage(stationService.getNearbyStationInfos(l)),
+                            ctx.chatId()
                     );
-                    silent.send(info.stream().map(this::stationInfoToString).reduce("", (a, b)->a+"\n"+b), ctx.chatId());
-                })
-                .build();
-    }
-
-    private String stationInfoToString(StationInfo s) {
-        return s.toString();
+                }).build();
     }
 }
