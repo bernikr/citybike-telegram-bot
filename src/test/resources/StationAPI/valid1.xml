@@ -13,11 +13,11 @@
     </url_terms_of_use_D>
     <station>
         <id>108</id>
-        <internalId>1026</internalId>
+        <internal_id>1026</internal_id>
         <name>Friedrich Schmidtplatz</name>
         <boxes>35</boxes>
-        <freeBoxes>30</freeBoxes>
-        <freeBikes>5</freeBikes>
+        <free_boxes>30</free_boxes>
+        <free_bikes>5</free_bikes>
         <status>aktiv</status>
         <description>Ecke Lichtenfelsgasse U2 Station Rathaus</description>
         <latitude>48.210425</latitude>
@@ -25,11 +25,11 @@
     </station>
     <station>
         <id>114</id>
-        <internalId>1144</internalId>
+        <internal_id>1144</internal_id>
         <name>Hoher Markt</name>
         <boxes>26</boxes>
-        <freeBoxes>7</freeBoxes>
-        <freeBikes>19</freeBikes>
+        <free_boxes>7</free_boxes>
+        <free_bikes>19</free_bikes>
         <status>nicht in Betrieb</status>
         <description/>
         <latitude>48.210666083418</latitude>
@@ -37,11 +37,11 @@
     </station>
     <station>
         <id>109</id>
-        <internalId>1029</internalId>
+        <internal_id>1029</internal_id>
         <name>Johannesgasse</name>
         <boxes>20</boxes>
-        <freeBoxes>11</freeBoxes>
-        <freeBikes>9</freeBikes>
+        <free_boxes>11</free_boxes>
+        <free_bikes>9</free_bikes>
         <status>in Bau</status>
         <description>
             Parkring / Stadtpark beim Haupteingang des Kursalons

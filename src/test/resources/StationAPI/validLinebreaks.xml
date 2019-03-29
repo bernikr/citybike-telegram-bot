@@ -3,21 +3,21 @@
         <id>
             108
         </id>
-        <internalId>
+        <internal_id>
             1026
-        </internalId>
+        </internal_id>
         <name>
             Friedrich Schmidtplatz
         </name>
         <boxes>
             35
         </boxes>
-        <freeBoxes>
+        <free_boxes>
             30
-        </freeBoxes>
-        <freeBikes>
+        </free_boxes>
+        <free_bikes>
             5
-        </freeBikes>
+        </free_bikes>
         <status>
             aktiv
         </status>
