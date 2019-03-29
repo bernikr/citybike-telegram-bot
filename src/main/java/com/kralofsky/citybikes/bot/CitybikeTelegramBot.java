@@ -17,7 +17,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
@@ -38,7 +37,7 @@ public class CitybikeTelegramBot extends AbilityBot {
         super(values.getBotToken(), values.getBotUsername(), dbContext);
         this.values = values;
         this.stationService = stationService;
-        LOGGER.info("created bot " + values.getBotToken() + " " + values.getBotUsername());
+        LOGGER.info("Initialize Bot " + values.getBotUsername());
     }
 
     @Override
