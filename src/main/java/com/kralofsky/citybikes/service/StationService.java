@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,13 +47,13 @@ public class StationService implements IStationService {
     }
 
     @Override
-    public StationInfo getHomeStation(Long chatId, Location loc) {
+    public Optional<StationInfo> getHomeStation(Long chatId, Location loc) {
         try {
             Integer id = persistance.<Long, Integer>getMap("home_stations").get(chatId);
             if(id != null){
-                return stationToStationInfo(stationAPI.getById(id), loc);
+                return Optional.of(stationToStationInfo(stationAPI.getById(id), loc));
             } else {
-                return null;
+                return Optional.empty();
             }
         } catch (ApiException e) {
             // TODO: rethrow error
@@ -62,7 +63,7 @@ public class StationService implements IStationService {
     }
 
     @Override
-    public StationInfo getHomeStation(Long chatId) {
+    public Optional<StationInfo> getHomeStation(Long chatId) {
         return getHomeStation(chatId, null);
     }
 

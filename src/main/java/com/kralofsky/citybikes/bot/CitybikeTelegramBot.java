@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
@@ -62,7 +63,10 @@ public class CitybikeTelegramBot extends AbilityBot {
                     );
                     silent.execute(new SendMessage()
                             .setChatId(ctx.chatId())
-                            .setText(MessageFormatter.getStationInfoMessage(stationService.getHomeStation(ctx.chatId(), l)))
+                            .setText(stationService.getHomeStation(ctx.chatId(), l)
+                                    .map(MessageFormatter::getStationInfoMessage)
+                                    .orElse("\"No Home Station set. Use /sethome\"")
+                            )
                             .enableMarkdown(true)
                             .disableWebPagePreview()
                     );
