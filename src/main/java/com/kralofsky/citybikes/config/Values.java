@@ -6,13 +6,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Values {
 
-    @Value("${custom.bot.token}")
+    @Value("${bot.token}")
     private String botToken;
 
-    @Value("${custom.bot.username}")
+    @Value("${bot.username}")
     private String botUsername;
 
-    @Value("${custom.bot.creatorId}")
+    @Value("${bot.creatorId}")
     private int creatorId;
 
     public String getBotToken() {
