@@ -1,3 +1,3 @@
 #!/bin/bash
 set -e
-ssh $DEPLOYLOGIN -v exit
+ssh citybikebot@euclid.srv.kralofsky.com -v exit
