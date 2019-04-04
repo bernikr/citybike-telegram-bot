@@ -5,7 +5,7 @@ jdk:
 script:
 - "./gradlew build -s"
 before_install:
-- openssl aes-256-cbc -K $encrypted_b01916763a1e_key -iv $encrypted_b01916763a1e_iv
+- openssl aes-256-cbc -K $encrypted_4f1f482141f0_key -iv $encrypted_4f1f482141f0_iv
   -in .travis/deploy_rsa.enc -out .travis/deploy_rsa -d
 - eval "$(ssh-agent -s)"
 - cp .travis/deploy_rsa ~/.ssh/id_rsa
