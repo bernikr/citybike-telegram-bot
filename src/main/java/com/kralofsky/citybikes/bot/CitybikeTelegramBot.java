@@ -64,7 +64,7 @@ public class CitybikeTelegramBot extends AbilityBot {
                             .setChatId(ctx.chatId())
                             .setText(stationService.getHomeStation(ctx.chatId(), l)
                                     .map(MessageFormatter::getStationInfoMessage)
-                                    .orElse("\"No Home Station set. Use /sethome\"")
+                                    .orElse("No Home Station set. Use /sethome")
                             )
                             .enableMarkdown(true)
                             .disableWebPagePreview()
