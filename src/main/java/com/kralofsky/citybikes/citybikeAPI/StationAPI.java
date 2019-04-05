@@ -1,7 +1,7 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
 
-import com.kralofsky.citybikes.entity.StationInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -11,8 +11,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,26 +19,18 @@ import java.util.stream.Collectors;
 
 @Component
 public class StationAPI {
-    private final static String API_PATH = "http://dynamisch.citybikewien.at/citybike_xml.php";
-    private URL apiURL;
+    private final ApiUrls apiUrls;
 
-    public StationAPI() {
-        try {
-            apiURL = new URL(API_PATH);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public StationAPI(URL url) {
-        apiURL = url;
+    @Autowired
+    public StationAPI(ApiUrls apiUrls) {
+        this.apiUrls = apiUrls;
     }
 
     public Collection<Station> getAllStations() throws ApiException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
-            Document doc = factory.newDocumentBuilder().parse(apiURL.openStream());
+            Document doc = factory.newDocumentBuilder().parse(apiUrls.getStationApiUrl().openStream());
             Element root = doc.getDocumentElement();
 
             List<Station> stationList = new ArrayList<>();

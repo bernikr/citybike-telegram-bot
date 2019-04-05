@@ -1,24 +1,36 @@
 package com.kralofsky.citybikes.unit;
 
 import com.kralofsky.citybikes.citybikeAPI.ApiException;
+import com.kralofsky.citybikes.citybikeAPI.ApiUrls;
 import com.kralofsky.citybikes.citybikeAPI.Station;
 import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.net.URL;
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StationApiTest {
+    @Mock private ApiUrls apiUrls;
 
-    private StationAPI getStationAPIwithData(String filename) {
-        return new StationAPI(getClass().getClassLoader().getResource("StationAPI/" + filename + ".xml"));
+    @InjectMocks private StationAPI api;
+
+    private URL getTestdataUrl(String filename) {
+        return getClass().getClassLoader().getResource("StationAPI/" + filename + ".xml");
     }
 
     @Test
     public void givenValidData_whenGetAllStations_allStationsAreNotNull() throws ApiException {
-        StationAPI api = getStationAPIwithData("valid1");
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("valid1"));
         Collection<Station> stations = api.getAllStations();
         assertNotNull(stations);
         stations.forEach(Assert::assertNotNull);
@@ -26,24 +38,26 @@ public class StationApiTest {
 
     @Test
     public void givenValidDataWith3Stations_whenGetAllStations_ListContains3Stations() throws ApiException {
-        StationAPI api = getStationAPIwithData("valid1");
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("valid1"));
         Collection<Station> stations = api.getAllStations();
         assertEquals(3, stations.size());
     }
 
     @Test
     public void givenEmptyData_whenGetAllStations_returnEmptyList() throws ApiException {
-        StationAPI api = getStationAPIwithData("empty");
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("empty"));
         Collection<Station> stations = api.getAllStations();
         assertTrue(stations.isEmpty());
     }
 
     @Test
     public void givenSingleStation_whenGetAllStations_returnThatStation() throws ApiException {
-        StationAPI api = getStationAPIwithData("validSingle");
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("validSingle"));
         Collection<Station> stations = api.getAllStations();
         assertEquals(1, stations.size());
-        Station s = stations.stream().findAny().get();
+        Optional<Station> os = stations.stream().findAny();
+        assertTrue(os.isPresent());
+        Station s = os.get();
         assertEquals(108, s.getId().intValue());
         assertEquals(1026, s.getInternalId().intValue());
         assertEquals("Friedrich Schmidtplatz", s.getName());
@@ -58,10 +72,12 @@ public class StationApiTest {
 
     @Test
     public void givenSingleStationWithMoreLinebreaks_whenGetAllStations_returnThatStation() throws ApiException {
-        StationAPI api = getStationAPIwithData("validLinebreaks");
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("validLinebreaks"));
         Collection<Station> stations = api.getAllStations();
         assertEquals(1, stations.size());
-        Station s = stations.stream().findAny().get();
+        Optional<Station> os = stations.stream().findAny();
+        assertTrue(os.isPresent());
+        Station s = os.get();
         assertEquals(108, s.getId().intValue());
         assertEquals(1026, s.getInternalId().intValue());
         assertEquals("Friedrich Schmidtplatz", s.getName());
@@ -76,25 +92,25 @@ public class StationApiTest {
 
     @Test(expected = ApiException.class)
     public void givenMissingField_whenGetAllStations_throwApiException() throws ApiException {
-        StationAPI api = getStationAPIwithData("missingField");
-        Collection<Station> stations = api.getAllStations();
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("missingField"));
+        api.getAllStations();
     }
 
     @Test(expected = ApiException.class)
     public void givenDuplicateField_whenGetAllStations_throwApiException() throws ApiException {
-        StationAPI api = getStationAPIwithData("duplicateField");
-        Collection<Station> stations = api.getAllStations();
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("duplicateField"));
+        api.getAllStations();
     }
 
     @Test(expected = ApiException.class)
     public void givenInvalidXml_whenGetAllStations_throwApiException() throws ApiException {
-        StationAPI api = getStationAPIwithData("invalidXml");
-        Collection<Station> stations = api.getAllStations();
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("invalidXml"));
+        api.getAllStations();
     }
 
     @Test(expected = ApiException.class)
     public void givenInvalidStatus_whenGetAllStations_throwApiException() throws ApiException {
-        StationAPI api = getStationAPIwithData("invalidStatus");
-        Collection<Station> stations = api.getAllStations();
+        Mockito.when(apiUrls.getStationApiUrl()).thenReturn(getTestdataUrl("invalidStatus"));
+        api.getAllStations();
     }
 }
