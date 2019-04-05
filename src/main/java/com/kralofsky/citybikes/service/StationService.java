@@ -1,16 +1,16 @@
 package com.kralofsky.citybikes.service;
 
 import com.kralofsky.citybikes.citybikeAPI.ApiException;
-import com.kralofsky.citybikes.citybikeAPI.Station;
 import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import com.kralofsky.citybikes.entity.Location;
-import com.kralofsky.citybikes.entity.StationInfo;
+import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.persistance.Persistance;
 import com.kralofsky.citybikes.util.LocationTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.abilitybots.api.util.Pair;
 
 import java.util.Comparator;
 import java.util.List;
@@ -31,12 +31,12 @@ public class StationService implements IStationService {
     }
 
     @Override
-    public List<StationInfo> getNearbyStationInfos(Location loc, int count) {
+    public List<Pair<Station, Double>> getNearbyStationInfos(Location loc, int count) {
         LOGGER.debug("Get StationInfos around Location " + loc);
         try {
             return stationAPI.getAllStations().stream()
-                    .map(station -> stationToStationInfo(station, loc))
-                    .sorted(Comparator.comparingDouble(StationInfo::getDistance))
+                    .map(s -> Pair.of(s, LocationTools.calculateDistance(loc, s.getLocation())))
+                    .sorted(Comparator.comparingDouble(Pair::b))
                     .limit(count)
                     .collect(Collectors.toList());
         } catch (ApiException e) {
@@ -47,11 +47,11 @@ public class StationService implements IStationService {
     }
 
     @Override
-    public Optional<StationInfo> getHomeStation(Long chatId, Location loc) {
+    public Optional<Station> getHomeStation(Long chatId) {
         try {
             Integer id = persistance.<Long, Integer>getMap("home_stations").get(chatId);
             if(id != null){
-                return Optional.of(stationToStationInfo(stationAPI.getById(id), loc));
+                return Optional.of(stationAPI.getById(id));
             } else {
                 return Optional.empty();
             }
@@ -59,28 +59,18 @@ public class StationService implements IStationService {
             // TODO: rethrow error
             LOGGER.error(e.toString());
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Optional<StationInfo> getHomeStation(Long chatId) {
-        return getHomeStation(chatId, null);
+    public Optional<Pair<Station, Double>> getHomeStation(Long chatId, Location loc) {
+        return getHomeStation(chatId).map(s -> Pair.of(s, LocationTools.calculateDistance(loc, s.getLocation())));
     }
 
     @Override
-    public StationInfo setHomeStation(Long chatId, Location loc) {
-        StationInfo home = getNearbyStationInfos(loc, 1).get(0);
-        persistance.<Long, Integer>getMap("home_stations").put(chatId, home.getId());
+    public Pair<Station, Double> setHomeStation(Long chatId, Location loc) {
+        Pair<Station, Double> home = getNearbyStationInfos(loc, 1).get(0);
+        persistance.<Long, Integer>getMap("home_stations").put(chatId, home.a().getId());
         return home;
-    }
-
-    private static StationInfo stationToStationInfo(Station station, Location loc) {
-        Location stationLoc = null;
-        Double distance = null;
-        if (loc != null) {
-            stationLoc = new Location(station.getLatitude(), station.getLongitude());
-            distance = LocationTools.calculateDistance(loc, stationLoc);
-        }
-        return new StationInfo(station.getId(), station.getName(), station.getFreeBoxes(), station.getFreeBikes(), stationLoc, distance);
     }
 }

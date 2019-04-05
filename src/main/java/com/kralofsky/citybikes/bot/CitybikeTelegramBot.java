@@ -4,7 +4,7 @@ import com.kralofsky.citybikes.bot.util.BotEntitiesMapper;
 import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.config.Values;
 import com.kralofsky.citybikes.entity.Location;
-import com.kralofsky.citybikes.entity.StationInfo;
+import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.service.IStationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.abilitybots.api.util.Pair;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -88,7 +89,7 @@ public class CitybikeTelegramBot extends AbilityBot {
                 .reply(upd -> {
                             LOGGER.info("New Home location recieved: " + upd.getMessage().getLocation() + " for user " + upd.getMessage().getFrom());
                             Location l = BotEntitiesMapper.botLocationtoLocationEntity(upd.getMessage().getLocation());
-                            StationInfo home = stationService.setHomeStation(upd.getMessage().getChatId(), l);
+                            Pair<Station, Double> home = stationService.setHomeStation(upd.getMessage().getChatId(), l);
                             silent.execute(new SendMessage()
                                     .setChatId(upd.getMessage().getChatId())
                                     .setText("*Home Station set to:*\n\n" + MessageFormatter.getStationInfoMessage(home))

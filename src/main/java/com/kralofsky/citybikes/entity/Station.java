@@ -1,4 +1,4 @@
-package com.kralofsky.citybikes.citybikeAPI;
+package com.kralofsky.citybikes.entity;
 
 import java.util.Objects;
 
@@ -11,10 +11,9 @@ public class Station {
     private Integer freeBikes;
     private Status status;
     private String description;
-    private Double latitude;
-    private Double longitude;
+    private Location location;
 
-    Station(Integer id, Integer internalId, String name, Integer boxes, Integer freeBoxes, Integer freeBikes, Status status, String description, Double latitude, Double longitude) {
+    public Station(Integer id, Integer internalId, String name, Integer boxes, Integer freeBoxes, Integer freeBikes, Status status, String description, Location location) {
         this.id = id;
         this.internalId = internalId;
         this.name = name;
@@ -23,8 +22,7 @@ public class Station {
         this.freeBikes = freeBikes;
         this.status = status;
         this.description = description;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.location = location;
     }
 
     public Integer getId() {
@@ -59,12 +57,8 @@ public class Station {
         return description;
     }
 
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
+    public Location getLocation() {
+        return location;
     }
 
     @Override
@@ -78,15 +72,14 @@ public class Station {
                 Objects.equals(boxes, station.boxes) &&
                 Objects.equals(freeBoxes, station.freeBoxes) &&
                 Objects.equals(freeBikes, station.freeBikes) &&
-                Objects.equals(status, station.status) &&
+                status == station.status &&
                 Objects.equals(description, station.description) &&
-                Objects.equals(latitude, station.latitude) &&
-                Objects.equals(longitude, station.longitude);
+                Objects.equals(location, station.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, internalId, name, boxes, freeBoxes, freeBikes, status, description, latitude, longitude);
+        return Objects.hash(id, internalId, name, boxes, freeBoxes, freeBikes, status, description, location);
     }
 
     @Override
@@ -98,10 +91,9 @@ public class Station {
                 ", boxes=" + boxes +
                 ", freeBoxes=" + freeBoxes +
                 ", freeBikes=" + freeBikes +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 ", description='" + description + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
+                ", location=" + location +
                 '}';
     }
 

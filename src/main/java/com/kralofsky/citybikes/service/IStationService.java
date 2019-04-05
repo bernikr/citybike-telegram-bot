@@ -1,17 +1,18 @@
 package com.kralofsky.citybikes.service;
 
+import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.entity.Location;
-import com.kralofsky.citybikes.entity.StationInfo;
+import org.telegram.abilitybots.api.util.Pair;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IStationService {
-    List<StationInfo> getNearbyStationInfos(Location loc, int count);
+    List<Pair<Station, Double>> getNearbyStationInfos(Location loc, int count);
 
-    Optional<StationInfo> getHomeStation(Long chatId, Location loc);
+    Optional<Pair<Station, Double>> getHomeStation(Long chatId, Location loc);
 
-    Optional<StationInfo> getHomeStation(Long chatId);
+    Optional<Station> getHomeStation(Long chatId);
 
-    StationInfo setHomeStation(Long chatId, Location loc);
+    Pair<Station, Double> setHomeStation(Long chatId, Location loc);
 }

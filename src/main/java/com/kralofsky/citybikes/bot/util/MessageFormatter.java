@@ -1,22 +1,31 @@
 package com.kralofsky.citybikes.bot.util;
 
-import com.kralofsky.citybikes.entity.StationInfo;
+import com.kralofsky.citybikes.entity.Station;
 import org.stringtemplate.v4.ST;
+import org.telegram.abilitybots.api.util.Pair;
 
 import java.util.List;
 
 public class MessageFormatter {
-    public static String getStationInfoMessage(List<StationInfo> stationInfos){
-        return stationInfos.stream()
+    public static String getStationInfoMessage(List<Pair<Station, Double>> StationDistancePairs){
+        return StationDistancePairs.stream()
                 .map(MessageFormatter::getStationInfoMessage)
                 .reduce("", (a, b)->a+"\n\n"+b);
     }
 
-    public static String getStationInfoMessage(StationInfo stationInfo){
+    public static String getStationInfoMessage(Pair<Station, Double> StationDistancePair) {
+        return getStationInfoMessage(StationDistancePair.a(), StationDistancePair.b());
+    }
+
+    public static String getStationInfoMessage(Station station) {
+        return getStationInfoMessage(station, null);
+    }
+
+    public static String getStationInfoMessage(Station stationInfo, Double distance){
         String d;
-        if (stationInfo.getDistance() == null) d=null;
-        else if (stationInfo.getDistance() < 1000) d=String.format("%.0fm", stationInfo.getDistance());
-        else d=String.format("%.1fkm", stationInfo.getDistance()/1000);
+        if (distance == null) d=null;
+        else if (distance < 1000) d=String.format("%.0fm", distance);
+        else d=String.format("%.1fkm", distance/1000);
 
         ST msg = new ST(
                 "[<name>](http://maps.google.com/maps?q=<lat>,<lon>)" +
@@ -28,7 +37,7 @@ public class MessageFormatter {
         msg.add("name", stationInfo.getName());
         msg.add("lat", stationInfo.getLocation().getLatitude());
         msg.add("lon", stationInfo.getLocation().getLongitude());
-        msg.add("distance_exists", stationInfo.getDistance()!=null);
+        msg.add("distance_exists", distance!=null);
         msg.add("distance", d);
         msg.add("free_bikes", stationInfo.getFreeBikes());
         msg.add("free_boxes", stationInfo.getFreeBoxes());

@@ -1,6 +1,8 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
 
+import com.kralofsky.citybikes.entity.Location;
+import com.kralofsky.citybikes.entity.Station;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -65,8 +67,10 @@ public class StationAPI {
                     Integer.valueOf(values.get("free_bikes")),
                     statusFromString(values.get("status")),
                     values.get("description"),
-                    Double.valueOf(values.get("latitude")),
-                    Double.valueOf(values.get("longitude"))
+                    new Location(
+                        Double.valueOf(values.get("latitude")),
+                        Double.valueOf(values.get("longitude"))
+                    )
             );
         } catch (NullPointerException | NumberFormatException e) {
             throw new ApiException("API format error: missing fields", e);

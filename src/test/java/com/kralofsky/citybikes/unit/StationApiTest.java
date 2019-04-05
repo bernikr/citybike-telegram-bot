@@ -2,7 +2,7 @@ package com.kralofsky.citybikes.unit;
 
 import com.kralofsky.citybikes.citybikeAPI.ApiException;
 import com.kralofsky.citybikes.citybikeAPI.ApiUrls;
-import com.kralofsky.citybikes.citybikeAPI.Station;
+import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,9 +20,11 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StationApiTest {
-    @Mock private ApiUrls apiUrls;
+    @Mock
+    private ApiUrls apiUrls;
 
-    @InjectMocks private StationAPI api;
+    @InjectMocks
+    private StationAPI api;
 
     private URL getTestdataUrl(String filename) {
         return getClass().getClassLoader().getResource("StationAPI/" + filename + ".xml");
@@ -66,8 +68,8 @@ public class StationApiTest {
         assertEquals(5, s.getFreeBikes().intValue());
         assertEquals(Station.Status.ACTIVE, s.getStatus());
         assertEquals("Ecke Lichtenfelsgasse U2 Station Rathaus", s.getDescription());
-        assertEquals(48.210425, s.getLatitude(), 0.00000000001);
-        assertEquals(16.356100, s.getLongitude(), 0.00000000001);
+        assertEquals(48.210425, s.getLocation().getLatitude(), 0.00000000001);
+        assertEquals(16.356100, s.getLocation().getLongitude(), 0.00000000001);
     }
 
     @Test
@@ -86,8 +88,8 @@ public class StationApiTest {
         assertEquals(5, s.getFreeBikes().intValue());
         assertEquals(Station.Status.ACTIVE, s.getStatus());
         assertEquals("Ecke Lichtenfelsgasse\nU2 Station Rathaus", s.getDescription());
-        assertEquals(48.210425, s.getLatitude(), 0.00000000001);
-        assertEquals(16.356100, s.getLongitude(), 0.00000000001);
+        assertEquals(48.210425, s.getLocation().getLatitude(), 0.00000000001);
+        assertEquals(16.356100, s.getLocation().getLongitude(), 0.00000000001);
     }
 
     @Test(expected = ApiException.class)
