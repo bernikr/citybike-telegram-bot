@@ -13,6 +13,12 @@ repositories {
     mavenCentral()
 }
 
+bootJar {
+    launchScript()
+    baseName = 'citybikes'
+    version = ''
+}
+
 dependencies {
     compile 'org.telegram:telegrambots-spring-boot-starter:4.1.2'
     compile 'org.telegram:telegrambots-abilities:4.1.2'
