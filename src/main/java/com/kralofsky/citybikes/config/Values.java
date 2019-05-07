@@ -1,36 +1,24 @@
 package com.kralofsky.citybikes.config;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@FieldDefaults(makeFinal = false, level = AccessLevel.PRIVATE)
+@Getter
 public class Values {
-
     @Value("${bot.token}")
-    private String botToken;
+    String botToken;
 
     @Value("${bot.username}")
-    private String botUsername;
+    String botUsername;
 
     @Value("${bot.creatorId}")
-    private int creatorId;
+    int creatorId;
 
     @Value("${cacheDuration}")
-    private int cacheDuration;
-
-    public String getBotToken() {
-        return botToken;
-    }
-
-    public String getBotUsername() {
-        return botUsername;
-    }
-
-    public int getCreatorId() {
-        return creatorId;
-    }
-
-    public int getCacheDuration() {
-        return cacheDuration;
-    }
+    int cacheDuration;
 }
