@@ -26,6 +26,6 @@ gradle-app.setting
 out/
 
 # config file containing the bot token
-application.yml
+/application.yml
 
 bot.db
