@@ -3,8 +3,7 @@ package com.kralofsky.citybikes.citybikeAPI;
 
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -22,9 +21,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class BasicStationAPI implements StationAPI {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicStationAPI.class);
-
     private final ApiUrls apiUrls;
 
     @Autowired
@@ -34,7 +32,7 @@ public class BasicStationAPI implements StationAPI {
 
     @Override
     public Collection<Station> getAllStations() throws ApiException {
-        LOGGER.info("getAllStations() from API");
+        log.info("getAllStations() from API");
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);

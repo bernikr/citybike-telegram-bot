@@ -6,8 +6,7 @@ import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.persistance.Persistance;
 import com.kralofsky.citybikes.util.LocationTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.abilitybots.api.util.Pair;
@@ -18,9 +17,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class StationService implements IStationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(StationService.class);
-
     private StationAPI stationAPI;
     private Persistance persistance;
 
@@ -32,7 +30,7 @@ public class StationService implements IStationService {
 
     @Override
     public List<Pair<Station, Double>> getNearbyStationInfos(Location loc, int count) {
-        LOGGER.debug("Get StationInfos around Location " + loc);
+        log.debug("Get StationInfos around Location " + loc);
         try {
             return stationAPI.getAllStations().stream()
                     .map(s -> Pair.of(s, LocationTools.calculateDistance(loc, s.getLocation())))
@@ -41,7 +39,7 @@ public class StationService implements IStationService {
                     .collect(Collectors.toList());
         } catch (ApiException e) {
             // TODO: rethrow error
-            LOGGER.error(e.toString());
+            log.error(e.toString());
         }
         return null;
     }
@@ -57,7 +55,7 @@ public class StationService implements IStationService {
             }
         } catch (ApiException e) {
             // TODO: rethrow error
-            LOGGER.error(e.toString());
+            log.error(e.toString());
         }
         return Optional.empty();
     }

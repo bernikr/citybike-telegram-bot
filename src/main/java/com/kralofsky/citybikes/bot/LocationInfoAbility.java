@@ -5,8 +5,7 @@ import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.service.IStationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.objects.MessageContext;
@@ -17,9 +16,8 @@ import static org.telegram.abilitybots.api.objects.Locality.USER;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
+@Slf4j
 public class LocationInfoAbility extends ExternalAbility {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CitybikeTelegramBot.class);
-
     private IStationService stationService;
 
     @Autowired
@@ -29,16 +27,17 @@ public class LocationInfoAbility extends ExternalAbility {
 
     @Override
     protected ExternalAbility.AbilityOptions getOptions() {
-        return new AbilityOptions()
+        return AbilityOptions.builder()
                 .name(DEFAULT)
                 .flag(LOCATION)
                 .locality(USER)
-                .privacy(PUBLIC);
+                .privacy(PUBLIC)
+                .build();
     }
 
     @Override
     protected void action(MessageContext ctx) {
-        LOGGER.info("getLocationInformation around " + ctx.update().getMessage().getLocation() + " by " + ctx.user());
+        log.info("getLocationInformation around " + ctx.update().getMessage().getLocation() + " by " + ctx.user());
         Location l = BotEntitiesMapper.botLocationtoLocationEntity(ctx.update().getMessage().getLocation());
         silent.execute(new SendMessage()
                 .setChatId(ctx.chatId())

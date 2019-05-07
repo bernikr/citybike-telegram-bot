@@ -1,5 +1,7 @@
 package com.kralofsky.citybikes.bot.util;
 
+import lombok.Builder;
+import lombok.Singular;
 import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.abilitybots.api.objects.*;
 import org.telegram.abilitybots.api.sender.DefaultSender;
@@ -7,6 +9,7 @@ import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -38,61 +41,29 @@ public abstract class ExternalAbility {
     public Ability getAbility(){
         AbilityOptions o = getOptions();
 
-
         final Ability.AbilityBuilder ab = Ability.builder()
                 .name(o.name)
                 .info(o.info)
                 .locality(o.locality)
                 .privacy(o.privacy)
-                .input(o.argNum)
+                .input(o.input)
                 .action(this::action)
                 .post(this::post)
-                .flag(o.flags);
+                .flag(o.flags.toArray(new Predicate[0]));
 
         replies().forEach(r -> ab.reply(r.action, r.conditions.toArray(new Predicate[0])));
 
         return ab.build();
     }
 
+    @Builder
     public static class AbilityOptions{
         private String name;
         private String info;
         private Privacy privacy;
         private Locality locality;
-        private int argNum;
-        private Predicate<Update>[] flags;
+        private int input;
 
-        public AbilityOptions() {}
-
-        public AbilityOptions name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public AbilityOptions info(String info) {
-            this.info = info;
-            return this;
-        }
-
-        @SafeVarargs
-        public final AbilityOptions flag(Predicate<Update>... flags) {
-            this.flags = flags;
-            return this;
-        }
-
-        public AbilityOptions locality(Locality type) {
-            this.locality = type;
-            return this;
-        }
-
-        public AbilityOptions input(int argNum) {
-            this.argNum = argNum;
-            return this;
-        }
-
-        public AbilityOptions privacy(Privacy privacy) {
-            this.privacy = privacy;
-            return this;
-        }
+        @Singular private Collection<Predicate<Update>> flags;
     }
 }

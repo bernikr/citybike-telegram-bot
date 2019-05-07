@@ -6,8 +6,7 @@ import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.service.IStationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.objects.MessageContext;
@@ -26,9 +25,8 @@ import static org.telegram.abilitybots.api.objects.Locality.USER;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
+@Slf4j
 public class SetHomeAbility extends ExternalAbility {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CitybikeTelegramBot.class);
-
     private IStationService stationService;
 
     private final static String request_for_location_msg = "Please reply with a location, the nearest CityBike station will be set as home and displayed every time.";
@@ -40,17 +38,18 @@ public class SetHomeAbility extends ExternalAbility {
 
     @Override
     protected AbilityOptions getOptions() {
-        return new AbilityOptions()
+        return AbilityOptions.builder()
                 .name("sethome")
                 .input(0)
                 .info("Set or Change the Home Station")
                 .locality(USER)
-                .privacy(PUBLIC);
+                .privacy(PUBLIC)
+                .build();
     }
 
     @Override
     protected void action(MessageContext ctx) {
-        LOGGER.info("/setHome by " + ctx.user());
+        log.info("/setHome by " + ctx.user());
         silent.forceReply(request_for_location_msg, ctx.chatId());
     }
 
@@ -60,7 +59,7 @@ public class SetHomeAbility extends ExternalAbility {
     }
 
     private void setHome(Update upd){
-        LOGGER.info("New Home location recieved: " + upd.getMessage().getLocation() + " for user " + upd.getMessage().getFrom());
+        log.info("New Home location recieved: " + upd.getMessage().getLocation() + " for user " + upd.getMessage().getFrom());
         Location l = BotEntitiesMapper.botLocationtoLocationEntity(upd.getMessage().getLocation());
         Pair<Station, Double> home = stationService.setHomeStation(upd.getMessage().getChatId(), l);
         silent.execute(new SendMessage()

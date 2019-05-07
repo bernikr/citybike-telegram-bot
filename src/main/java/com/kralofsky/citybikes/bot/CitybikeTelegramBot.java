@@ -3,8 +3,7 @@ package com.kralofsky.citybikes.bot;
 import com.google.common.collect.ImmutableMap;
 import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import com.kralofsky.citybikes.config.Values;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -21,16 +20,15 @@ import java.util.stream.Stream;
 
 
 @Component
+@Slf4j
 public class CitybikeTelegramBot extends AbilityBot {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CitybikeTelegramBot.class);
-
     private Values values;
 
     @Autowired
     public CitybikeTelegramBot(Values values, DBContext dbContext, Collection<? extends ExternalAbility> externalAbilities) {
         super(values.getBotToken(), values.getBotUsername(), dbContext);
         this.values = values;
-        LOGGER.info("Initialize Bot " + values.getBotUsername());
+        log.info("Initialize Bot " + values.getBotUsername());
 
         externalAbilities.forEach(a -> a.init(this, DEFAULT));
         Collection<Ability> newAbilities = externalAbilities.stream().map(ExternalAbility::getAbility).collect(Collectors.toList());
@@ -38,7 +36,7 @@ public class CitybikeTelegramBot extends AbilityBot {
         try {
             registerAbilities(newAbilities);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            LOGGER.error("Error while registering Abilities", e);
+            log.error("Error while registering Abilities", e);
             throw new RuntimeException(e);
         }
 
