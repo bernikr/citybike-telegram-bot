@@ -2,8 +2,8 @@ package com.kralofsky.citybikes.unit;
 
 import com.kralofsky.citybikes.citybikeAPI.ApiException;
 import com.kralofsky.citybikes.citybikeAPI.ApiUrls;
+import com.kralofsky.citybikes.citybikeAPI.BasicStationAPI;
 import com.kralofsky.citybikes.entity.Station;
-import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +19,12 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StationApiTest {
+public class BasicStationApiTest {
     @Mock
     private ApiUrls apiUrls;
 
     @InjectMocks
-    private StationAPI api;
+    private BasicStationAPI api;
 
     private URL getTestdataUrl(String filename) {
         return getClass().getClassLoader().getResource("StationAPI/" + filename + ".xml");
