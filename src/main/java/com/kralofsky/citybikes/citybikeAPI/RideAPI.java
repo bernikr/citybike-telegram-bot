@@ -111,11 +111,6 @@ public class RideAPI {
                 .flatMap(o -> o);
     }
 
-    public Stream<Ride> getRides(LocalDateTime since) throws IOException {
-        return getRides()
-                .takeWhile(r -> r.getEndTime().isAfter(since));
-    }
-
     public static void main(String[] args) throws IOException {
         RideAPI rideAPI = new RideAPI("username", "psasword");
         rideAPI.login();
