@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -51,11 +53,28 @@ public class RideAPI {
         log.info(String.format("Logged in as %s (%s)", username, user));
     }
 
-    private int getRideCount() throws IOException {
-        Document doc = s.load("https://www.citybikewien.at/de/meine-fahrten");
+    private boolean loginCheck(Document doc) {
+        return doc.selectFirst(".user-name")!=null;
+    }
+
+    Document getWithLogin(String url, Predicate<Document> loginCheck) throws ApiException {
+        try {
+            Document doc = s.load(url);
+            if(!loginCheck.test(doc)){
+                login();
+                doc = s.load(url);
+            }
+            return doc;
+        } catch (IOException e) {
+            throw new ApiException("Error while connecting to the Citebike Page", e);
+        }
+    }
+
+    private int getRideCount() throws ApiException {
+        Document doc = getWithLogin("https://www.citybikewien.at/de/meine-fahrten", this::loginCheck);
         int i = Integer.valueOf(
-                Optional.of(doc.select("#content div + p").first())
-                .orElseThrow(()-> new IOException("Invalid Page format"))
+                Optional.ofNullable(doc.select("#content div + p").first())
+                .orElseThrow(()-> new ApiException("Invalid Page format"))
                 .text()
                 .split(" ")[2]
         );
@@ -63,17 +82,18 @@ public class RideAPI {
         return i;
     }
 
+
+
     @SneakyThrows
     private Stream<Ride> loadRidesFromPage(int pageNr) {
         log.info(String.format("Load Page %d of user %s", pageNr, username));
-        Document doc = s.load(String.format("https://www.citybikewien.at/de/meine-fahrten?start=%d", (pageNr-1)*5));
-        Element table = Optional.of(doc.select("#content table tbody").first())
-                .orElseThrow(()-> new IOException("Invalid Page format"));
+        Document doc = getWithLogin(String.format("https://www.citybikewien.at/de/meine-fahrten?start=%d", (pageNr-1)*5), this::loginCheck);
+        Element table = Optional.ofNullable(doc.select("#content table tbody").first())
+                .orElseThrow(()-> new ApiException("Invalid Page format"));
 
         return table.getElementsByTag("tr").stream().map(this::rowToRide);
     }
 
-    @SneakyThrows
     private Ride rowToRide(Element row) {
         DateTimeFormatter f = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
@@ -103,7 +123,7 @@ public class RideAPI {
         return rb.build();
     }
 
-    public Stream<Ride> getRides() throws IOException {
+    public Stream<Ride> getRides() throws ApiException {
         int pageCount = getRideCount()/5 +1;
 
         return IntStream.rangeClosed(1, pageCount)
@@ -111,10 +131,10 @@ public class RideAPI {
                 .flatMap(o -> o);
     }
 
-    public static void main(String[] args) throws IOException {
         RideAPI rideAPI = new RideAPI("username", "psasword");
-        rideAPI.login();
-        rideAPI.getRides(LocalDateTime.of(2019,1,1,0,0))
+    public static void main(String[] args) throws ApiException {
+        rideAPI.getRides()
+                .takeWhile(r -> LocalDateTime.of(2019,1,1,0,0).isBefore(r.getEndTime()))
                 .forEach(System.out::println);
     }
 }
