@@ -46,7 +46,7 @@ public class RideAPI {
 
         doc = s.load("https://www.citybikewien.at/de/component/users/?task=user.login&Itemid=101", Connection.Method.POST, loginFields);
 
-        String user = Optional.ofNullable(doc.select(".user-name-data").first())
+        String user = Optional.ofNullable(doc.selectFirst(".user-name-data"))
                 .orElseThrow(() -> new IOException("Login Error"))
                 .text();
         user = user.substring(0, user.length()-1);
@@ -73,7 +73,7 @@ public class RideAPI {
     private int getRideCount() throws ApiException {
         Document doc = getWithLogin("https://www.citybikewien.at/de/meine-fahrten", this::loginCheck);
         int i = Integer.valueOf(
-                Optional.ofNullable(doc.select("#content div + p").first())
+                Optional.ofNullable(doc.selectFirst("#content div + p"))
                 .orElseThrow(()-> new ApiException("Invalid Page format"))
                 .text()
                 .split(" ")[2]
@@ -88,7 +88,7 @@ public class RideAPI {
     private Stream<Ride> loadRidesFromPage(int pageNr) {
         log.info(String.format("Load Page %d of user %s", pageNr, username));
         Document doc = getWithLogin(String.format("https://www.citybikewien.at/de/meine-fahrten?start=%d", (pageNr-1)*5), this::loginCheck);
-        Element table = Optional.ofNullable(doc.select("#content table tbody").first())
+        Element table = Optional.ofNullable(doc.selectFirst("#content table tbody"))
                 .orElseThrow(()-> new ApiException("Invalid Page format"));
 
         return table.getElementsByTag("tr").stream().map(this::rowToRide);
@@ -101,24 +101,24 @@ public class RideAPI {
 
 
         rb.date(LocalDate.from(DateTimeFormatter.ofPattern("dd.MM.yyyy")
-                        .parse(row.select("td[data-title='Datum:'] span.td-date").first().text())));
+                        .parse(row.selectFirst("td[data-title='Datum:'] span.td-date").text())));
 
-        rb.startStation(row.select("td[data-title='Entlehnung:'] span.td-location-item").first().text());
+        rb.startStation(row.selectFirst("td[data-title='Entlehnung:'] span.td-location-item").text());
         rb.startTime(LocalDateTime.from(f.parse(
-                row.select("td[data-title='Entlehnung:'] span.td-date-item").first().text()
+                row.selectFirst("td[data-title='Entlehnung:'] span.td-date-item").text()
                 + " "
-                + row.select("td[data-title='Entlehnung:'] span.td-time-item").first().text()
+                + row.selectFirst("td[data-title='Entlehnung:'] span.td-time-item").text()
         )));
 
-        rb.endStation(row.select("td[data-title='Rückgabe:'] span.td-location-item").first().text());
+        rb.endStation(row.selectFirst("td[data-title='Rückgabe:'] span.td-location-item").text());
         rb.endTime(LocalDateTime.from(f.parse(
-                row.select("td[data-title='Rückgabe:'] span.td-date-item").first().text()
+                row.selectFirst("td[data-title='Rückgabe:'] span.td-date-item").text()
                         + " "
-                        + row.select("td[data-title='Rückgabe:'] span.td-time-item").first().text()
+                        + row.selectFirst("td[data-title='Rückgabe:'] span.td-time-item").text()
         )));
 
-        rb.price(Double.parseDouble(row.select("td[data-title='Betrag:']").first().text().substring(2).replace(',', '.')));
-        rb.elevation(Integer.parseInt(row.select("td[data-title='Höhenmeter:']").first().text().replace(" m", "")));
+        rb.price(Double.parseDouble(row.selectFirst("td[data-title='Betrag:']").text().substring(2).replace(',', '.')));
+        rb.elevation(Integer.parseInt(row.selectFirst("td[data-title='Höhenmeter:']").text().replace(" m", "")));
 
         return rb.build();
     }
@@ -129,12 +129,5 @@ public class RideAPI {
         return IntStream.rangeClosed(1, pageCount)
                 .mapToObj(this::loadRidesFromPage)
                 .flatMap(o -> o);
-    }
-
-        RideAPI rideAPI = new RideAPI("username", "psasword");
-    public static void main(String[] args) throws ApiException {
-        rideAPI.getRides()
-                .takeWhile(r -> LocalDateTime.of(2019,1,1,0,0).isBefore(r.getEndTime()))
-                .forEach(System.out::println);
     }
 }
