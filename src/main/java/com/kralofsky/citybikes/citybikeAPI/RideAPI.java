@@ -12,10 +12,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Slf4j
 public class RideAPI {
@@ -63,12 +63,14 @@ public class RideAPI {
         return i;
     }
 
-    private List<Ride> loadPage(int pageNr) throws IOException {
-        Document doc = s.load(String.format("https://www.citybikewien.at/de/meine-fahrten?start=%d", (pageNr-1)/5));
+    @SneakyThrows
+    private Stream<Ride> loadRidesFromPage(int pageNr) {
+        log.info(String.format("Load Page %d of user %s", pageNr, username));
+        Document doc = s.load(String.format("https://www.citybikewien.at/de/meine-fahrten?start=%d", (pageNr-1)*5));
         Element table = Optional.of(doc.select("#content table tbody").first())
                 .orElseThrow(()-> new IOException("Invalid Page format"));
 
-        return table.getElementsByTag("tr").stream().map(this::rowToRide).collect(Collectors.toList());
+        return table.getElementsByTag("tr").stream().map(this::rowToRide);
     }
 
     @SneakyThrows
@@ -101,10 +103,23 @@ public class RideAPI {
         return rb.build();
     }
 
+    public Stream<Ride> getRides() throws IOException {
+        int pageCount = getRideCount()/5 +1;
+
+        return IntStream.rangeClosed(1, pageCount)
+                .mapToObj(this::loadRidesFromPage)
+                .flatMap(o -> o);
+    }
+
+    public Stream<Ride> getRides(LocalDateTime since) throws IOException {
+        return getRides()
+                .takeWhile(r -> r.getEndTime().isAfter(since));
+    }
+
     public static void main(String[] args) throws IOException {
         RideAPI rideAPI = new RideAPI("username", "psasword");
         rideAPI.login();
-        rideAPI.getRideCount();
-        rideAPI.loadPage(0).forEach(System.out::println);
+        rideAPI.getRides(LocalDateTime.of(2019,1,1,0,0))
+                .forEach(System.out::println);
     }
 }
