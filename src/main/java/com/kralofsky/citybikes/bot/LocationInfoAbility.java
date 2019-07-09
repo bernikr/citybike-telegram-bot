@@ -29,7 +29,7 @@ public class LocationInfoAbility extends ExternalAbility {
     protected ExternalAbility.AbilityOptions getOptions() {
         return AbilityOptions.builder()
                 .name(CitybikeTelegramBot.DEFAULT_COMMAND)
-                .flag(Flag.LOCATION)
+                .flag(Flag.MESSAGE.and(Flag.LOCATION))
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
                 .build();

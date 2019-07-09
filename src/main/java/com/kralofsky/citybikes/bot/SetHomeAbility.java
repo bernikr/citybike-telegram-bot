@@ -50,7 +50,7 @@ public class SetHomeAbility extends ExternalAbility {
 
     @Override
     protected List<Reply> replies() {
-        return List.of(Reply.of(this::setHome, Flag.LOCATION, Flag.REPLY, isReplyToBot(), isReplyToMessage(request_for_location_msg)));
+        return List.of(Reply.of(this::setHome, Flag.MESSAGE.and(Flag.LOCATION), Flag.REPLY, isReplyToBot(), isReplyToMessage(request_for_location_msg)));
     }
 
     private void setHome(Update upd){
