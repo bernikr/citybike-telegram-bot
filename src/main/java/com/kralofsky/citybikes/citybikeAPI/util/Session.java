@@ -1,15 +1,18 @@
 package com.kralofsky.citybikes.citybikeAPI.util;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Session {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+public class Session implements Serializable {
     private Map<String, String> cookies = new HashMap<>();
 
     public Document load(String url) throws IOException {

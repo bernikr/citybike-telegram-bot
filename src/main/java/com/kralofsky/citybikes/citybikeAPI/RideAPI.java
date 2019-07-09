@@ -1,5 +1,6 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
+import com.kralofsky.citybikes.entity.ApiUser;
 import com.kralofsky.citybikes.entity.Ride;
 
 import java.util.stream.Stream;
@@ -9,7 +10,9 @@ public interface RideAPI {
 
     Stream<Ride> getRides() throws ApiException;
 
-    static RideAPI forUser(String username, String password) {
-        return new DefaultRideAPI(username, password);
+    ApiUser getUser();
+
+    static RideAPI forUser(ApiUser user) {
+        return new DefaultRideAPI(user);
     }
 }

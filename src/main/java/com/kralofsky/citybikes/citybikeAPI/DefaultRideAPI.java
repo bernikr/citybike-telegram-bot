@@ -1,6 +1,7 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
 import com.kralofsky.citybikes.citybikeAPI.util.Session;
+import com.kralofsky.citybikes.entity.ApiUser;
 import com.kralofsky.citybikes.entity.Ride;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +23,16 @@ import java.util.stream.Stream;
 @Slf4j
 public class DefaultRideAPI implements RideAPI {
     private Session s;
-    private String username;
-    private String password;
+    private ApiUser user;
 
-    DefaultRideAPI(String username, String password) {
-        this.username = username;
-        this.password = password;
+    DefaultRideAPI(ApiUser user) {
+        this.user = user;
+        s = user.getSession();
 
-        s = new Session();
+        if (s == null) {
+            s = new Session();
+            user.setSession(s);
+        }
     }
 
     private void login() throws IOException {
@@ -40,17 +43,20 @@ public class DefaultRideAPI implements RideAPI {
                 .map(Element::attributes)
                 .collect(Collectors.toMap(e -> e.get("name"), e -> e.get("value")));
 
-        loginFields.put("username", username);
-        loginFields.put("password", password);
+        loginFields.put("username", user.getUsername());
+        loginFields.put("password", user.getPassword());
 
 
         doc = s.load("https://www.citybikewien.at/de/component/users/?task=user.login&Itemid=101", Connection.Method.POST, loginFields);
 
-        String user = Optional.ofNullable(doc.selectFirst(".user-name-data"))
+        String userFullName = Optional.ofNullable(doc.selectFirst(".user-name-data"))
                 .orElseThrow(() -> new IOException("Login Error"))
                 .text();
-        user = user.substring(0, user.length()-1);
-        log.info(String.format("Logged in as %s (%s)", username, user));
+        userFullName = userFullName.substring(0, userFullName.length()-1);
+
+        user.setFullName(userFullName);
+
+        log.info(String.format("Logged in as %s (%s)", user.getUsername(), userFullName));
     }
 
     private boolean loginCheck(Document doc) {
@@ -79,13 +85,13 @@ public class DefaultRideAPI implements RideAPI {
                 .text()
                 .split(" ")[2]
         );
-        log.info(String.format("Found %d rides for user %s", i, username));
+        log.info(String.format("Found %d rides for user %s", i, user.getUsername()));
         return i;
     }
 
     @SneakyThrows
     private Stream<Ride> loadRidesFromPage(int pageNr) {
-        log.info(String.format("Load Page %d of user %s", pageNr, username));
+        log.info(String.format("Load Page %d of user %s", pageNr, user.getUsername()));
         Document doc = getWithLogin(String.format("https://www.citybikewien.at/de/meine-fahrten?start=%d", (pageNr-1)*5), this::loginCheck);
         Element table = Optional.ofNullable(doc.selectFirst("#content table tbody"))
                 .orElseThrow(()-> new ApiException("Invalid Page format"));
@@ -129,5 +135,10 @@ public class DefaultRideAPI implements RideAPI {
         return IntStream.rangeClosed(1, pageCount)
                 .mapToObj(this::loadRidesFromPage)
                 .flatMap(o -> o);
+    }
+
+    @Override
+    public ApiUser getUser() {
+        return user;
     }
 }
