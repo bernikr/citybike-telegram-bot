@@ -59,7 +59,7 @@ public class SetHomeAbility extends ExternalAbility {
         Pair<Station, Double> home = stationService.setHomeStation(upd.getMessage().getChatId(), l);
         silent.execute(new SendMessage()
                 .setChatId(upd.getMessage().getChatId())
-                .setText("*Home Station set to:*\n\n" + MessageFormatter.getStationInfoMessage(home))
+                .setText("*Home Station set to:*\n\n" + MessageFormatter.stationToText(home))
                 .enableMarkdown(true)
                 .disableWebPagePreview()
         );

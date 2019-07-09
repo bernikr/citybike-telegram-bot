@@ -1,6 +1,7 @@
 package com.kralofsky.citybikes.bot;
 
 import com.kralofsky.citybikes.bot.util.ExternalAbility;
+import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.citybikeAPI.ApiException;
 import com.kralofsky.citybikes.service.RideService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class LastRideAbility extends ExternalAbility {
 
         try {
             rideService.getLastRide(ctx.chatId()).ifPresentOrElse(
-                    r -> silent.send(r.toString(), ctx.chatId()),
+                    r -> silent.send(MessageFormatter.rideToText(r), ctx.chatId()),
                     () -> silent.send("Keine Fahrten gefunden.", ctx.chatId())
             );
         } catch (ApiException e) {

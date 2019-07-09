@@ -1,27 +1,29 @@
 package com.kralofsky.citybikes.bot.util;
 
+import com.kralofsky.citybikes.entity.Ride;
 import com.kralofsky.citybikes.entity.Station;
 import org.stringtemplate.v4.ST;
 import org.telegram.abilitybots.api.util.Pair;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class MessageFormatter {
-    public static String getStationInfoMessage(List<Pair<Station, Double>> StationDistancePairs){
+    public static String stationToText(List<Pair<Station, Double>> StationDistancePairs){
         return StationDistancePairs.stream()
-                .map(MessageFormatter::getStationInfoMessage)
+                .map(MessageFormatter::stationToText)
                 .reduce("", (a, b)->a+"\n\n"+b);
     }
 
-    public static String getStationInfoMessage(Pair<Station, Double> StationDistancePair) {
-        return getStationInfoMessage(StationDistancePair.a(), StationDistancePair.b());
+    public static String stationToText(Pair<Station, Double> StationDistancePair) {
+        return stationToText(StationDistancePair.a(), StationDistancePair.b());
     }
 
-    public static String getStationInfoMessage(Station station) {
-        return getStationInfoMessage(station, null);
+    public static String stationToText(Station station) {
+        return stationToText(station, null);
     }
 
-    public static String getStationInfoMessage(Station stationInfo, Double distance){
+    public static String stationToText(Station stationInfo, Double distance){
         String d;
         if (distance == null) d=null;
         else if (distance < 1000) d=String.format("%.0fm", distance);
@@ -43,6 +45,25 @@ public class MessageFormatter {
         msg.add("free_boxes", stationInfo.getFreeBoxes());
         msg.add("free_bikes_emoji", countToEmoji(stationInfo.getFreeBikes()));
         msg.add("free_boxes_emoji", countToEmoji(stationInfo.getFreeBoxes()));
+
+        return msg.render();
+    }
+
+    public static String rideToText(Ride r){
+        ST msg = new ST(
+                "<date> <time_from>-<time_to>\n" +
+                        "From: <station_from>\n" +
+                        "To: <station_to>\n" +
+                        "<cost> <elevation>"
+        );
+
+        msg.add("date", r.getDate().format(DateTimeFormatter.ofPattern("dd. MM. YYYY")));
+        msg.add("time_from", r.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+        msg.add("time_to", r.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+        msg.add("station_from", r.getStartStation());
+        msg.add("station_to", r.getEndStation());
+        msg.add("cost", String.format("€%.2f", r.getPrice()));
+        msg.add("elevation", String.format("%dm", r.getElevation()));
 
         return msg.render();
     }

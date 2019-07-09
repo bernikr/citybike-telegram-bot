@@ -41,14 +41,14 @@ public class LocationInfoAbility extends ExternalAbility {
         Location l = BotEntitiesMapper.botLocationtoLocationEntity(ctx.update().getMessage().getLocation());
         silent.execute(new SendMessage()
                 .setChatId(ctx.chatId())
-                .setText(MessageFormatter.getStationInfoMessage(stationService.getNearbyStationInfos(l, 3)))
+                .setText(MessageFormatter.stationToText(stationService.getNearbyStationInfos(l, 3)))
                 .enableMarkdown(true)
                 .disableWebPagePreview()
         );
         silent.execute(new SendMessage()
                 .setChatId(ctx.chatId())
                 .setText(stationService.getHomeStation(ctx.chatId(), l)
-                        .map(MessageFormatter::getStationInfoMessage)
+                        .map(MessageFormatter::stationToText)
                         .orElse("No Home Station set. Use /sethome")
                 )
                 .enableMarkdown(true)
