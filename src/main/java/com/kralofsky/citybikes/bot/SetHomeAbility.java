@@ -9,8 +9,7 @@ import com.kralofsky.citybikes.service.IStationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.abilitybots.api.objects.MessageContext;
-import org.telegram.abilitybots.api.objects.Reply;
+import org.telegram.abilitybots.api.objects.*;
 import org.telegram.abilitybots.api.util.Pair;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -19,10 +18,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
-import static org.telegram.abilitybots.api.objects.Flag.REPLY;
-import static org.telegram.abilitybots.api.objects.Locality.USER;
-import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
 @Slf4j
@@ -42,8 +37,8 @@ public class SetHomeAbility extends ExternalAbility {
                 .name("sethome")
                 .input(0)
                 .info("Set or Change the Home Station")
-                .locality(USER)
-                .privacy(PUBLIC)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
                 .build();
     }
 
@@ -55,7 +50,7 @@ public class SetHomeAbility extends ExternalAbility {
 
     @Override
     protected List<Reply> replies() {
-        return List.of(Reply.of(this::setHome, LOCATION, REPLY, isReplyToBot(), isReplyToMessage(request_for_location_msg)));
+        return List.of(Reply.of(this::setHome, Flag.LOCATION, Flag.REPLY, isReplyToBot(), isReplyToMessage(request_for_location_msg)));
     }
 
     private void setHome(Update upd){
