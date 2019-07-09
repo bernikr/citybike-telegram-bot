@@ -3,7 +3,7 @@ package com.kralofsky.citybikes.citybikeAPI;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.persistance.Persistance;
-import com.kralofsky.citybikes.service.StationService;
+import com.kralofsky.citybikes.service.DefaultStationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,7 +25,7 @@ public class StationServiceTest {
     private Persistance persistance;
 
     @InjectMocks
-    private StationService stationService;
+    private DefaultStationService stationService;
 
     private Station STATION_1 = new Station(1, 2, "name", 3,4,5,
             Station.Status.ACTIVE, "desc", new Location(48.19987078817638,16.36822705522536));

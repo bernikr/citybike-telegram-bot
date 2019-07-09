@@ -4,7 +4,7 @@ import com.kralofsky.citybikes.bot.util.BotEntitiesMapper;
 import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.entity.Location;
-import com.kralofsky.citybikes.service.IStationService;
+import com.kralofsky.citybikes.service.StationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,10 +18,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 @Component
 @Slf4j
 public class LocationInfoAbility extends ExternalAbility {
-    private IStationService stationService;
+    private StationService stationService;
 
     @Autowired
-    public LocationInfoAbility(IStationService stationService) {
+    public LocationInfoAbility(StationService stationService) {
         this.stationService = stationService;
     }
 
