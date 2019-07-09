@@ -19,8 +19,6 @@ public abstract class ExternalAbility {
     protected SilentSender silent;
     protected BaseAbilityBot bot;
 
-    protected String DEFAULT;
-
     abstract protected AbilityOptions getOptions();
 
     abstract protected void action(MessageContext ctx);
@@ -31,11 +29,10 @@ public abstract class ExternalAbility {
         return Collections.emptyList();
     }
 
-    public void init(BaseAbilityBot bot, String defaultCommand) {
+    public void init(BaseAbilityBot bot) {
         this.bot = bot;
         this.sender = new DefaultSender(bot);
         this.silent = new SilentSender(sender);
-        this.DEFAULT = defaultCommand;
     }
 
     public Ability getAbility(){

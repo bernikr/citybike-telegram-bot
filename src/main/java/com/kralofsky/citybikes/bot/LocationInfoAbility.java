@@ -8,12 +8,12 @@ import com.kralofsky.citybikes.service.IStationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.abilitybots.api.objects.Flag;
+import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.MessageContext;
+import org.telegram.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import static org.telegram.abilitybots.api.objects.Flag.LOCATION;
-import static org.telegram.abilitybots.api.objects.Locality.USER;
-import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
 @Slf4j
@@ -28,10 +28,10 @@ public class LocationInfoAbility extends ExternalAbility {
     @Override
     protected ExternalAbility.AbilityOptions getOptions() {
         return AbilityOptions.builder()
-                .name(DEFAULT)
-                .flag(LOCATION)
-                .locality(USER)
-                .privacy(PUBLIC)
+                .name(CitybikeTelegramBot.DEFAULT_COMMAND)
+                .flag(Flag.LOCATION)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
                 .build();
     }
 

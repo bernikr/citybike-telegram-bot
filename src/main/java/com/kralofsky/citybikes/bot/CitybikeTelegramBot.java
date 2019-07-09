@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
+import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Reply;
@@ -22,6 +23,8 @@ import java.util.stream.Stream;
 @Component
 @Slf4j
 public class CitybikeTelegramBot extends AbilityBot {
+    static final String DEFAULT_COMMAND = BaseAbilityBot.DEFAULT;
+
     private Values values;
 
     @Autowired
@@ -30,7 +33,7 @@ public class CitybikeTelegramBot extends AbilityBot {
         this.values = values;
         log.info("Initialize Bot " + values.getBotUsername());
 
-        externalAbilities.forEach(a -> a.init(this, DEFAULT));
+        externalAbilities.forEach(a -> a.init(this));
         Collection<Ability> newAbilities = externalAbilities.stream().map(ExternalAbility::getAbility).collect(Collectors.toList());
 
         try {

@@ -2,10 +2,9 @@ package com.kralofsky.citybikes.bot;
 
 import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import org.springframework.stereotype.Component;
+import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.MessageContext;
-
-import static org.telegram.abilitybots.api.objects.Locality.USER;
-import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
+import org.telegram.abilitybots.api.objects.Privacy;
 
 @Component
 public class StartAbility extends ExternalAbility {
@@ -19,8 +18,8 @@ public class StartAbility extends ExternalAbility {
         return AbilityOptions.builder()
                 .name("start")
                 .input(0)
-                .locality(USER)
-                .privacy(PUBLIC)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
                 .build();
     }
 
