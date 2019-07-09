@@ -18,8 +18,12 @@ public class CachedStationAPI implements StationAPI {
 
     @Autowired
     public CachedStationAPI(StationAPI stationApiImplementation, Values values) {
+        this(stationApiImplementation, values.getCacheDuration());
+    }
+
+    public CachedStationAPI(StationAPI stationApiImplementation, int cacheDuration) {
         impl = stationApiImplementation;
-        CACHE_TIME = values.getCacheDuration();
+        CACHE_TIME = cacheDuration;
     }
 
     @Override

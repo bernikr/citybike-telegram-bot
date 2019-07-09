@@ -1,8 +1,6 @@
-package com.kralofsky.citybikes.unit;
+package com.kralofsky.citybikes.citybikeAPI;
 
-import com.kralofsky.citybikes.citybikeAPI.ApiException;
-import com.kralofsky.citybikes.citybikeAPI.ApiUrls;
-import com.kralofsky.citybikes.citybikeAPI.BasicStationAPI;
+import com.kralofsky.citybikes.citybikeAPI.util.ApiUrls;
 import com.kralofsky.citybikes.entity.Station;
 import org.junit.Assert;
 import org.junit.Test;

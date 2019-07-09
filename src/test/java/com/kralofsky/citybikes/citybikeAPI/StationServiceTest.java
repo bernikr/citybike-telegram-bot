@@ -1,7 +1,5 @@
-package com.kralofsky.citybikes.unit;
+package com.kralofsky.citybikes.citybikeAPI;
 
-import com.kralofsky.citybikes.citybikeAPI.ApiException;
-import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
 import com.kralofsky.citybikes.persistance.Persistance;

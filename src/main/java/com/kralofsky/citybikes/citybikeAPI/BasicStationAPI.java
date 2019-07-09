@@ -1,6 +1,7 @@
 package com.kralofsky.citybikes.citybikeAPI;
 
 
+import com.kralofsky.citybikes.citybikeAPI.util.ApiUrls;
 import com.kralofsky.citybikes.citybikeAPI.util.XmlUtil;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;

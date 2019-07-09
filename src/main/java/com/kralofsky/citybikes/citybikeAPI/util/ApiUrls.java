@@ -1,4 +1,4 @@
-package com.kralofsky.citybikes.citybikeAPI;
+package com.kralofsky.citybikes.citybikeAPI.util;
 
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 
 @Component
-
 public class ApiUrls {
     public ApiUrls() {}
 
