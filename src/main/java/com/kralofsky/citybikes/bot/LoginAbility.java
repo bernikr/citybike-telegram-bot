@@ -24,7 +24,7 @@ public class LoginAbility extends ExternalAbility {
     protected void action(MessageContext ctx) {
         String[] args = ctx.arguments();
 
-        RideAPI rideAPI = new RideAPI(args[0], args[1]);
+        RideAPI rideAPI = RideAPI.forUser(args[0], args[1]);
 
         try {
             silent.send(rideAPI.getRides().findFirst().get().toString(), ctx.chatId());
