@@ -35,7 +35,7 @@ public class DefaultRideAPI implements RideAPI {
         }
     }
 
-    private void login() throws IOException {
+    private void login() throws ApiException, IOException {
         Document doc = s.load("https://www.citybikewien.at/de");
 
         Map<String, String> loginFields = doc.select("#mloginfrm input[type='hidden']")
@@ -46,11 +46,10 @@ public class DefaultRideAPI implements RideAPI {
         loginFields.put("username", user.getUsername());
         loginFields.put("password", user.getPassword());
 
-
         doc = s.load("https://www.citybikewien.at/de/component/users/?task=user.login&Itemid=101", Connection.Method.POST, loginFields);
 
         String userFullName = Optional.ofNullable(doc.selectFirst(".user-name-data"))
-                .orElseThrow(() -> new IOException("Login Error"))
+                .orElseThrow(() -> new ApiException("Login Error"))
                 .text();
         userFullName = userFullName.substring(0, userFullName.length()-1);
 
@@ -72,6 +71,7 @@ public class DefaultRideAPI implements RideAPI {
             }
             return doc;
         } catch (IOException e) {
+            log.error("Error while connecting to the Citebike Page", e);
             throw new ApiException("Error while connecting to the Citebike Page", e);
         }
     }
