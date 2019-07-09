@@ -4,10 +4,9 @@ import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import com.kralofsky.citybikes.citybikeAPI.ApiException;
 import com.kralofsky.citybikes.citybikeAPI.RideAPI;
 import org.springframework.stereotype.Component;
+import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.MessageContext;
-
-import static org.telegram.abilitybots.api.objects.Locality.USER;
-import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
+import org.telegram.abilitybots.api.objects.Privacy;
 
 @Component
 public class LoginAbility extends ExternalAbility {
@@ -16,8 +15,9 @@ public class LoginAbility extends ExternalAbility {
         return AbilityOptions.builder()
                 .name("login")
                 .input(2)
-                .locality(USER)
-                .privacy(PUBLIC).build();
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
+                .build();
     }
 
     @Override
