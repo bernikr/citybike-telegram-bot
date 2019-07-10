@@ -49,14 +49,16 @@ public class MessageFormatter {
         return msg.render();
     }
 
-    public static String rideToText(Ride r){
-        ST msg = new ST(
-                "<date> <time_from>-<time_to>\n" +
+    public static String rideToText(Ride r, int index, int rideCount){
+        ST msg = new ST("<index>/<num>\n"+
+                        "<date> <time_from>-<time_to>\n" +
                         "From: <station_from>\n" +
                         "To: <station_to>\n" +
                         "<cost> <elevation>"
         );
 
+        msg.add("index", index);
+        msg.add("num", rideCount);
         msg.add("date", r.getDate().format(DateTimeFormatter.ofPattern("dd. MM. YYYY")));
         msg.add("time_from", r.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
         msg.add("time_to", r.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm")));

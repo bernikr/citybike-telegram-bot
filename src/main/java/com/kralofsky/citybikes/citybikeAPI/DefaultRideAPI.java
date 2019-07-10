@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 public class DefaultRideAPI implements RideAPI {
     private Session s;
     private ApiUser user;
+    private Consumer<RideAPI> afterLoginAction = (r)->{};
 
     DefaultRideAPI(ApiUser user) {
         this.user = user;
@@ -54,6 +56,7 @@ public class DefaultRideAPI implements RideAPI {
         userFullName = userFullName.substring(0, userFullName.length()-1);
 
         user.setFullName(userFullName);
+        afterLoginAction.accept(this);
 
         log.info(String.format("Logged in as %s (%s)", user.getUsername(), userFullName));
     }
@@ -140,5 +143,10 @@ public class DefaultRideAPI implements RideAPI {
     @Override
     public ApiUser getUser() {
         return user;
+    }
+
+    @Override
+    public void afterLogin(Consumer<RideAPI> action) {
+        afterLoginAction.andThen(action);
     }
 }
