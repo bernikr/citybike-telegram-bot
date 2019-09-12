@@ -28,7 +28,7 @@ public class LocationInfoAbility extends ExternalAbility {
     @Override
     protected ExternalAbility.AbilityOptions getOptions() {
         return AbilityOptions.builder()
-                .name(CitybikeTelegramBot.DEFAULT_COMMAND)
+                .name(CitybikeTelegramBot.Companion.getDEFAULT_COMMAND())
                 .flag(Flag.LOCATION)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
