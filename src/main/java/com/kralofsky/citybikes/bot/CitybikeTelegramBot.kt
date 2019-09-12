@@ -82,7 +82,7 @@ abstract class ExternalAbility {
                     .post { this.post(it) }
                     .flag(*o.flags.toTypedArray())
 
-            replies().forEach { r -> ab.reply(r.action, *r.conditions.toTypedArray()) }
+            replies.forEach { r -> ab.reply(r.action, *r.conditions.toTypedArray()) }
 
             return ab.build()
         }
@@ -91,16 +91,13 @@ abstract class ExternalAbility {
 
     protected fun post(ctx: MessageContext) {}
 
-    protected open fun replies(): List<Reply> {
-        return emptyList()
-    }
+    protected open val replies: List<Reply> = emptyList()
 
     fun init(bot: BaseAbilityBot) {
         this.bot = bot
         this.sender = DefaultSender(bot)
         this.silent = SilentSender(sender)
     }
-
 
     data class AbilityOptions(
             var name: String = CitybikeTelegramBot.DEFAULT_COMMAND,
@@ -109,12 +106,5 @@ abstract class ExternalAbility {
             var locality: Locality = Locality.ALL,
             var input: Int = 0,
             var flags: MutableCollection<Predicate<Update>> = mutableListOf()
-    ){
-        fun name(name: String) = apply { this.name = name }
-        fun info(info: String) = apply { this.info = info }
-        fun privacy(privacy: Privacy) = apply { this.privacy = privacy }
-        fun locality(locality: Locality) = apply { this.locality = locality }
-        fun input(input: Int) = apply { this.input = input }
-        fun flag(flag: Predicate<Update>) = apply { this.flags.add(flag) }
-    }
+    )
 }

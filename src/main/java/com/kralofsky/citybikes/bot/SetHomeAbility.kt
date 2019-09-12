@@ -16,12 +16,11 @@ import java.util.function.Predicate
 class SetHomeAbility(private val stationService: IStationService) : ExternalAbility() {
     private val log = logger()
 
-    override val options = ExternalAbility.AbilityOptions()
-                .name("sethome")
-                .input(0)
-                .info("Set or Change the Home Station")
-                .locality(Locality.USER)
-                .privacy(Privacy.PUBLIC)
+    override val options = AbilityOptions(
+            name = "sethome",
+            info = "Set or Change the Home Station",
+            locality = Locality.USER
+    )
 
     private val isReplyToBot: Predicate<Update> =
             Predicate { it.message.replyToMessage.from.userName.equals(bot!!.botUsername, ignoreCase = true) }
@@ -31,9 +30,9 @@ class SetHomeAbility(private val stationService: IStationService) : ExternalAbil
         silent!!.forceReply(request_for_location_msg, ctx.chatId()!!)
     }
 
-    override fun replies(): List<Reply> {
-        return listOf(Reply.of(Consumer { this.setHome(it) }, Flag.LOCATION, Flag.REPLY, isReplyToBot, isReplyToMessage(request_for_location_msg)))
-    }
+    override val replies = listOf(
+            Reply.of(Consumer { this.setHome(it) }, Flag.LOCATION, Flag.REPLY, isReplyToBot, isReplyToMessage(request_for_location_msg))
+    )
 
     private fun setHome(upd: Update) {
         log.info("New Home location recieved: " + upd.message.location + " for user " + upd.message.from)
