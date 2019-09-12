@@ -1,7 +1,6 @@
 package com.kralofsky.citybikes.bot;
 
 import com.kralofsky.citybikes.bot.util.BotEntitiesMapper;
-import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.service.IStationService;
@@ -13,8 +12,6 @@ import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-
-import java.util.List;
 
 
 @Component

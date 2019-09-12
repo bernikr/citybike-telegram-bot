@@ -1,6 +1,5 @@
 package com.kralofsky.citybikes.bot;
 
-import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.MessageContext;

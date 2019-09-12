@@ -1,7 +1,6 @@
 package com.kralofsky.citybikes.bot;
 
 import com.kralofsky.citybikes.bot.util.BotEntitiesMapper;
-import com.kralofsky.citybikes.bot.util.ExternalAbility;
 import com.kralofsky.citybikes.bot.util.MessageFormatter;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
