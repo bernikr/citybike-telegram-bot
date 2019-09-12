@@ -15,16 +15,14 @@ public class StartAbility extends ExternalAbility {
 
     @Override
     protected AbilityOptions getOptions() {
-        return AbilityOptions.builder()
+        return new AbilityOptions()
                 .name("start")
-                .input(0)
                 .locality(Locality.USER)
-                .privacy(Privacy.PUBLIC)
-                .build();
+                .privacy(Privacy.PUBLIC);
     }
 
     @Override
     protected void action(MessageContext ctx) {
-        silent.send(message, ctx.chatId());
+        getSilent().send(message, ctx.chatId());
     }
 }

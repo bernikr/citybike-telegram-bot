@@ -33,19 +33,18 @@ public class SetHomeAbility extends ExternalAbility {
 
     @Override
     protected AbilityOptions getOptions() {
-        return AbilityOptions.builder()
+        return new AbilityOptions()
                 .name("sethome")
                 .input(0)
                 .info("Set or Change the Home Station")
                 .locality(Locality.USER)
-                .privacy(Privacy.PUBLIC)
-                .build();
+                .privacy(Privacy.PUBLIC);
     }
 
     @Override
     protected void action(MessageContext ctx) {
         log.info("/setHome by " + ctx.user());
-        silent.forceReply(request_for_location_msg, ctx.chatId());
+        getSilent().forceReply(request_for_location_msg, ctx.chatId());
     }
 
     @Override
@@ -57,7 +56,7 @@ public class SetHomeAbility extends ExternalAbility {
         log.info("New Home location recieved: " + upd.getMessage().getLocation() + " for user " + upd.getMessage().getFrom());
         Location l = BotEntitiesMapper.botLocationtoLocationEntity(upd.getMessage().getLocation());
         Pair<Station, Double> home = stationService.setHomeStation(upd.getMessage().getChatId(), l);
-        silent.execute(new SendMessage()
+        getSilent().execute(new SendMessage()
                 .setChatId(upd.getMessage().getChatId())
                 .setText("*Home Station set to:*\n\n" + MessageFormatter.getStationInfoMessage(home))
                 .enableMarkdown(true)
@@ -73,6 +72,6 @@ public class SetHomeAbility extends ExternalAbility {
     }
 
     private Predicate<Update> isReplyToBot() {
-        return upd -> upd.getMessage().getReplyToMessage().getFrom().getUserName().equalsIgnoreCase(bot.getBotUsername());
+        return upd -> upd.getMessage().getReplyToMessage().getFrom().getUserName().equalsIgnoreCase(getBot().getBotUsername());
     }
 }
