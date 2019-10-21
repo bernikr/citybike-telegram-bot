@@ -19,7 +19,6 @@ import java.util.Locale;
 
 @Controller
 @SpringBootApplication
-@Slf4j
 public class CitybikeTelegramBotApp {
     @RequestMapping("/")
     @ResponseBody

@@ -24,4 +24,10 @@ public class Values {
 
     @Value("${webhook:true}")
     boolean webhook;
+
+    @Value("${BASE_URL:}")
+    String baseURL;
+
+    @Value("hooks/bot/${BOT_TOKEN}")
+    String webhookPath;
 }
