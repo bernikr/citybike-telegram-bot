@@ -20,7 +20,6 @@ bootJar {
 }
 
 dependencies {
-    compile 'org.telegram:telegrambots-spring-boot-starter:4.3.1'
     compile 'org.telegram:telegrambots-abilities:4.3.1'
     compile 'org.antlr:ST4:4.1'
     compile 'org.springframework.boot:spring-boot-starter-web'

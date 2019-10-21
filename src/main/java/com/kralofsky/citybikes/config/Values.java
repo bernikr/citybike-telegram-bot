@@ -21,4 +21,7 @@ public class Values {
 
     @Value("${cacheDuration}")
     int cacheDuration;
+
+    @Value("${webhook:true}")
+    boolean webhook;
 }
