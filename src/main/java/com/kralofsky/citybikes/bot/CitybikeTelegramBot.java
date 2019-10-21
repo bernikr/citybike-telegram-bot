@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-@Component
+//@Component
 @Slf4j
 public class CitybikeTelegramBot extends AbilityBot {
     static final String DEFAULT_COMMAND = BaseAbilityBot.DEFAULT;
