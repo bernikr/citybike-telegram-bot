@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 public class Values {
-    @Value("${bot.token}")
+    @Value("${BOT_TOKEN}")
     String botToken;
 
-    @Value("${bot.username}")
+    @Value("${BOT_USERNAME}")
     String botUsername;
 
-    @Value("${bot.creatorId}")
+    @Value("${BOT_CREATORID}")
     int creatorId;
 
     @Value("${cacheDuration}")
