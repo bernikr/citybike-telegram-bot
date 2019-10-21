@@ -24,8 +24,6 @@ public class Webhook {
 
     @PostMapping("/hooks/bot/{botToken}")
     public String webhook(@RequestBody Update update, @PathVariable String botToken){
-        log.info("received update:");
-        log.info(update.toString());
         if (botToken.equals(bot.getBotToken())){
             bot.onUpdateReceived(update);
             return "ok";
