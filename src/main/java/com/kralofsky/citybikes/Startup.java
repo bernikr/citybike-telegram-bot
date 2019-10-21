@@ -29,7 +29,7 @@ public class Startup {
     public void startup() throws TelegramApiRequestException {
         if(values.isWebhook()){
             log.info("startup with webhook (URL: " + values.getBaseURL() + ")");
-            WebhookUtils.setWebhook(bot, values.getBaseURL() + values.getWebhookPath(), null);
+            WebhookUtils.setWebhook(bot, values.getBaseURL() + "hooks/bot/" + values.getBotToken(), null);
         } else {
             log.info("No Webhook Configured, using Long Polling");
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi();

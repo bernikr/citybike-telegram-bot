@@ -27,7 +27,4 @@ public class Values {
 
     @Value("${BASE_URL:}")
     String baseURL;
-
-    @Value("hooks/bot/${BOT_TOKEN}")
-    String webhookPath;
 }
