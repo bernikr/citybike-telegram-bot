@@ -11,6 +11,7 @@ import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Reply;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -22,14 +23,14 @@ import java.util.stream.Stream;
 
 @Component
 @Slf4j
-public class CitybikeTelegramBot extends AbilityBot {
+public class CitybikeTelegramBot extends BaseAbilityBot {
     static final String DEFAULT_COMMAND = BaseAbilityBot.DEFAULT;
 
     private Values values;
 
     @Autowired
     public CitybikeTelegramBot(Values values, DBContext dbContext, Collection<? extends ExternalAbility> externalAbilities) {
-        super(values.getBotToken(), values.getBotUsername(), dbContext);
+        super(values.getBotToken(), values.getBotUsername(), dbContext, new DefaultBotOptions());
         this.values = values;
         log.info("Initialize Bot " + values.getBotUsername());
 
@@ -52,7 +53,7 @@ public class CitybikeTelegramBot extends AbilityBot {
 
     // TODO This is a hack that uses reflection to write to private fields of the superclass...
     private void registerAbilities(Collection<Ability> newAbilities) throws NoSuchFieldException, IllegalAccessException {
-        Class bab = this.getClass().getSuperclass().getSuperclass();
+        Class bab = this.getClass().getSuperclass();
         Field abilitiesField = bab.getDeclaredField("abilities");
         abilitiesField.setAccessible(true);
         Map<String, Ability> existingAbilities = (Map<String, Ability>) abilitiesField.get(this);
