@@ -2,6 +2,7 @@ package com.kralofsky.citybikes;
 
 import com.kralofsky.citybikes.bot.CitybikeTelegramBot;
 import com.kralofsky.citybikes.config.Values;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @RestController
+@Slf4j
 public class Webhook {
     private CitybikeTelegramBot bot;
 
@@ -21,6 +23,8 @@ public class Webhook {
 
     @PostMapping("/hooks/bot/{botToken}")
     public String webhook(Update update, @PathVariable String botToken){
+        log.info("received update:");
+        log.info(update.toString());
         if (botToken.equals(bot.getBotToken())){
             bot.onUpdateReceived(update);
             return "ok";
