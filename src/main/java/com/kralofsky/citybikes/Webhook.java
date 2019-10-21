@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -22,7 +23,7 @@ public class Webhook {
     }
 
     @PostMapping("/hooks/bot/{botToken}")
-    public String webhook(Update update, @PathVariable String botToken){
+    public String webhook(@RequestBody Update update, @PathVariable String botToken){
         log.info("received update:");
         log.info(update.toString());
         if (botToken.equals(bot.getBotToken())){
