@@ -5,8 +5,11 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
+import org.redisson.config.SingleServerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 @Component
 public class Persistence {
@@ -14,9 +17,20 @@ public class Persistence {
 
     @Autowired
     public Persistence(Values values) {
+        String redisUriString = values.getRedisURL();
+        URI redisUri = URI.create(redisUriString);
+
         Config config = new Config();
-        config.setCodec(new JsonJacksonCodec());
-        config.useSingleServer().setAddress(values.getRedisURL());
+        SingleServerConfig serverConfig = config.useSingleServer()
+                .setAddress(redisUriString)
+                .setConnectionPoolSize(10)
+                .setConnectionMinimumIdleSize(10)
+                .setTimeout(5000);
+
+        if (redisUri.getUserInfo() != null) {
+            serverConfig.setPassword(redisUri.getUserInfo().substring(redisUri.getUserInfo().indexOf(":")+1));
+        }
+
         db = Redisson.create(config);
     }
 
