@@ -23,7 +23,7 @@ dependencies {
     compile 'org.telegram:telegrambots-abilities:4.3.1'
     compile 'org.antlr:ST4:4.1'
     compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.redisson:redisson:3.11.4'
+    compile 'org.redisson:redisson:3.11.0'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
