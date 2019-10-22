@@ -4,7 +4,7 @@ import com.kralofsky.citybikes.citybikeAPI.ApiException;
 import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
-import com.kralofsky.citybikes.persistance.Persistance;
+import com.kralofsky.citybikes.persistance.Persistence;
 import com.kralofsky.citybikes.service.StationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +24,7 @@ public class StationServiceTest {
     private StationAPI stationAPI;
 
     @Mock
-    private Persistance persistance;
+    private Persistence persistence;
 
     @InjectMocks
     private StationService stationService;

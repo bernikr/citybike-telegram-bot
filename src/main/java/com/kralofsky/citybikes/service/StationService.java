@@ -4,7 +4,7 @@ import com.kralofsky.citybikes.citybikeAPI.ApiException;
 import com.kralofsky.citybikes.citybikeAPI.StationAPI;
 import com.kralofsky.citybikes.entity.Location;
 import com.kralofsky.citybikes.entity.Station;
-import com.kralofsky.citybikes.persistance.Persistance;
+import com.kralofsky.citybikes.persistance.Persistence;
 import com.kralofsky.citybikes.util.LocationTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StationService implements IStationService {
     private StationAPI stationAPI;
-    private Persistance persistance;
+    private Persistence persistence;
 
     @Autowired
-    public StationService(StationAPI stationAPI, Persistance persistance) {
+    public StationService(StationAPI stationAPI, Persistence persistence) {
         this.stationAPI = stationAPI;
-        this.persistance = persistance;
+        this.persistence = persistence;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class StationService implements IStationService {
     @Override
     public Optional<Station> getHomeStation(Long chatId) {
         try {
-            Integer id = persistance.<Long, Integer>getMap("home_stations").get(chatId);
+            Integer id = persistence.getHomeStationId(chatId);
             if(id != null){
                 return Optional.of(stationAPI.getById(id));
             } else {
@@ -68,7 +68,7 @@ public class StationService implements IStationService {
     @Override
     public Pair<Station, Double> setHomeStation(Long chatId, Location loc) {
         Pair<Station, Double> home = getNearbyStationInfos(loc, 1).get(0);
-        persistance.<Long, Integer>getMap("home_stations").put(chatId, home.a().getId());
+        persistence.setHomeStationId(chatId, home.a().getId());
         return home;
     }
 }

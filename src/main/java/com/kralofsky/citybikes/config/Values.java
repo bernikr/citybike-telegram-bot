@@ -27,4 +27,7 @@ public class Values {
 
     @Value("${BASE_URL:}")
     String baseURL;
+
+    @Value("${REDIS_URL}")
+    String redisURL;
 }
