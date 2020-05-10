@@ -40,3 +40,7 @@ class DateTimeEncoder(JSONEncoder):
             return o.strftime("%Y-%m-%dT%H:%M:%S")
         if isinstance(o, date):
             return o.strftime("%Y-%m-%d")
+
+
+if __name__ == "__main__":
+    app.run()

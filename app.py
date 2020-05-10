@@ -2,18 +2,36 @@ import json
 import logging
 import os
 import sys
-from logging.handlers import TimedRotatingFileHandler
-from os import path
+from queue import Queue
+from threading import Thread
 
-from telegram.ext import Updater
+from flask import Flask, request
+from telegram import Bot, Update
+from telegram.ext import Dispatcher
 
 from helpBot import help_handler, start_handler
 from stationBot import location_info_handler
 
-logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-                    level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
-logger = logging.getLogger(__name__)
+app = Flask(__name__)
 
+TOKEN = os.environ.get('TOKEN')
+BASE_URL = os.environ.get('BASE_URL')
+PORT = os.environ.get('PORT')
+
+update_queue = Queue()
+
+
+@app.route('/{}'.format(TOKEN), methods=['POST'])
+def respond():
+    # retrieve the message in JSON and then transform it to Telegram object
+    update = Update.de_json(request.get_json(force=True), bot)
+    update_queue.put(update)
+    return 'ok'
+
+
+@app.route('/')
+def index():
+    return 'hello world'
 
 def attach_handlers(dp):
     dp.add_handler(location_info_handler)
@@ -22,29 +40,20 @@ def attach_handlers(dp):
 
 
 if __name__ == "__main__":
-    if path.exists('config.json'):
-        with open('config.json') as f:
-            config = json.load(f)
+    logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                        level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
+    logger = logging.getLogger(__name__)
 
-            updater = Updater(config['bot_token'], use_context=True)
-            attach_handlers(updater.dispatcher)
-            updater.start_polling()
-            logger.info("Bot started")
-            updater.idle()
-    else:
-        TOKEN = os.environ.get('TOKEN')
-        BASE_URL = os.environ.get('BASE_URL')
-        PORT = os.environ.get('PORT')
-        logger = logging.getLogger(__name__)
+    # Create bot, update queue and dispatcher instances
+    bot = Bot(TOKEN)
+    dispatcher = Dispatcher(bot, update_queue)
 
-        # Set up the Updater
-        updater = Updater(TOKEN, use_context=True)
-        attach_handlers(updater.dispatcher)
+    attach_handlers(dispatcher)
 
-        # Start the webhook
-        updater.start_webhook(listen="0.0.0.0",
-                              port=int(PORT),
-                              url_path=TOKEN)
-        updater.bot.setWebhook(BASE_URL + TOKEN)
-        logger.info("Bot started")
-        updater.idle()
+    # Start the thread
+    thread = Thread(target=dispatcher.start, name='dispatcher')
+    thread.start()
+
+    bot.set_webhook(BASE_URL + TOKEN)
+
+    app.run(host="0.0.0.0", port=PORT)
