@@ -33,6 +33,7 @@ def respond():
 def index():
     return 'hello world'
 
+
 def attach_handlers(dp):
     dp.add_handler(location_info_handler)
     dp.add_handler(start_handler)
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
     # Create bot, update queue and dispatcher instances
-    bot = Bot(TOKEN)
+    bot = Bot(TOKEN, use_context=True)
     dispatcher = Dispatcher(bot, update_queue)
 
     attach_handlers(dispatcher)
