@@ -1,10 +1,8 @@
 import json
-import pickle
 from datetime import datetime
+from flask import Flask
 import requests
 from bs4 import BeautifulSoup
-import utils
-from DBtypes import Station, Ride
 
 
 class LoginError(IOError):
@@ -16,14 +14,10 @@ class CitybikeAccount:
         # start a request session to store the login cookie
         self.user = user
         self.s = requests.Session()
-        if user.cookie_dump is None:
-            self.login()
-            user.cookie_dump = pickle.dumps(self.s.cookies)
-        else:
-            self.s.cookies.update(pickle.loads(user.cookie_dump))
+        self.login()
 
     def login(self):
-        login_data = {"username": self.user.username, "password": self.user.password}
+        login_data = {"username": self.user['username'], "password": self.user['password']}
         # get the hidden login fields needed to login
         frontpage = self.s.get("https://www.citybikewien.at/de")
         fp = BeautifulSoup(frontpage.content, 'html.parser')
@@ -39,6 +33,7 @@ class CitybikeAccount:
         user_name = soup.select(".user-name-data")
         if len(user_name) < 1:
             raise LoginError()
+        self.user['name'] = user_name[0].text[:-1]
 
     def get_ride_count(self):
         # get the number of existing rows from the website
@@ -53,7 +48,6 @@ class CitybikeAccount:
         soup = BeautifulSoup(page.content, 'html.parser')
         table = soup.select('#content table tbody')[0]
 
-        rides = []
         for row in table.find_all('tr'):
             r = []
 
@@ -72,50 +66,37 @@ class CitybikeAccount:
             r[5] = r[5][2:]
             r[6] = r[6][:-2]
 
-            # remove newlines and replace umlaute
-            r = [utils.normalize_umlauts(t.replace('\n', ' ').strip()) for t in r]
+            # remove newlines
+            r = [t.replace('\n', ' ').strip() for t in r]
 
             end_time = datetime.strptime(r[4], '%d.%m.%Y %H:%M')
 
             if end_time > since:
-                ride = Ride(user=self.user,
-                            date=datetime.strptime(r[0], '%d.%m.%Y').date(),
-                            start_station_name=r[1],
-                            start_time=datetime.strptime(r[2], '%d.%m.%Y %H:%M'),
-                            end_station_name=r[3],
-                            end_time=end_time,
-                            price=float(r[5].replace(',', '.')),
-                            elevation=r[6]
-                            )
-                rides.append(ride)
+                yield dict(date=datetime.strptime(r[0], '%d.%m.%Y').date(),
+                           start_station_name=r[1],
+                           start_time=datetime.strptime(r[2], '%d.%m.%Y %H:%M'),
+                           end_station_name=r[3],
+                           end_time=end_time,
+                           price=float(r[5].replace(',', '.')),
+                           elevation=int(r[6])
+                           )
             else:
                 break
-        return rides
 
-    def get_rides(self, since=None, callback=None, callbackArgs=None):
+    def get_rides(self, since=None, yield_ride_count=False):
         if since is None:
             since = datetime.min
 
-        try:
-            ride_count = self.get_ride_count()
-        except:
-            self.login()
-            ride_count = self.get_ride_count()
+        ride_count = self.get_ride_count()
 
-        output = []
-        # load all pages and add them to the outputs
+        if yield_ride_count:
+            yield ride_count
+
+        # load all pages and yield their contents
         for i in range(0, ride_count, 5):
             # read the rows
-            newrides = self.load_page(i, since=since)
-            output.extend(newrides)
-            if len(newrides) < 5:
-                break
-            else:
-                if callback is not None:
-                    callback(current=i, count=ride_count, finished=False, callbackArgs=callbackArgs)
-        if callback is not None:
-            callback(current=len(output), finished=True, callbackArgs=callbackArgs)
-        return output
+            for r in self.load_page(i, since=since):
+                yield r
 
 
 def get_stations():
@@ -123,13 +104,6 @@ def get_stations():
                         '?service=WFS&request=GetFeature&version=1.1.0'
                         '&typeName=ogdwien:CITYBIKEOGD&srsName=EPSG:4326&outputFormat=json')
     json_data = json.loads(data.content)
-    raw_data = json_data['features']
+    stations = json_data['features']
 
-    stations = [Station(id=s['properties']['SE_SDO_ROWID'],
-                        bezirk=s['properties']['BEZIRK'],
-                        name=utils.normalize_umlauts(s['properties']['STATION']),
-                        #name=s['properties']['STATION'],
-                        lat=s['geometry']['coordinates'][1],
-                        lon=s['geometry']['coordinates'][0]
-                        ) for s in raw_data]
     return stations
