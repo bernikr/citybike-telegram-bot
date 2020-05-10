@@ -6,3 +6,4 @@ requests==2.23.0
 SQLAlchemy==1.3.16
 xmltodict==0.12.0
 psycopg2==2.8.5
+gunicorn==20.0.4
