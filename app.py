@@ -46,8 +46,8 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
     # Create bot, update queue and dispatcher instances
-    bot = Bot(TOKEN, use_context=True)
-    dispatcher = Dispatcher(bot, update_queue)
+    bot = Bot(TOKEN)
+    dispatcher = Dispatcher(bot, update_queue, use_context=True)
 
     attach_handlers(dispatcher)
 
