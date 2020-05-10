@@ -38,7 +38,7 @@ if __name__ == "__main__":
         logger = logging.getLogger(__name__)
 
         # Set up the Updater
-        updater = Updater(TOKEN)
+        updater = Updater(TOKEN, use_context=True)
         attach_handlers(updater.dispatcher)
 
         # Start the webhook
