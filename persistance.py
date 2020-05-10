@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 from sqlalchemy import Column, types, create_engine, PrimaryKeyConstraint
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,7 +9,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 
-db_engine = create_engine('sqlite:///citybikes.db')
+db_engine = create_engine(os.environ.get('DATABASE_URL', 'sqlite:///citybikes.db'))
 DB = scoped_session(sessionmaker(bind=db_engine))
 
 
