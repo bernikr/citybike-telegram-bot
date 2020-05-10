@@ -49,25 +49,6 @@ def get_setting(user_id, setting):
         return json.loads(setting.value)
 
 
-#######################
-# Static Station Data #
-#######################
-class Station(Base):
-    __tablename__ = 'station'
-
-    id = Column(types.Integer, primary_key=True)
-    name = Column(types.String, nullable=False)
-    lat = Column(types.Float)
-    lon = Column(types.Float)
-
-
-def save_stations_data(stations):
-    session = DB()
-    for s in stations:
-        session.merge(Station(id=s.id, name=s.name, lat=s.loc.lat, lon=s.loc.lon))
-    session.commit()
-
-
 ####
 # Create all database tables on load
 Base.metadata.create_all(db_engine)

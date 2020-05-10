@@ -1,6 +1,5 @@
-import json
 from datetime import datetime
-from flask import Flask
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -97,13 +96,3 @@ class CitybikeAccount:
             # read the rows
             for r in self.load_page(i, since=since):
                 yield r
-
-
-def get_stations():
-    data = requests.get('https://data.wien.gv.at/daten/geo'
-                        '?service=WFS&request=GetFeature&version=1.1.0'
-                        '&typeName=ogdwien:CITYBIKEOGD&srsName=EPSG:4326&outputFormat=json')
-    json_data = json.loads(data.content)
-    stations = json_data['features']
-
-    return stations
