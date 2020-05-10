@@ -3,9 +3,11 @@ import os
 import sys
 from queue import Queue
 from threading import Thread
+from time import sleep
 
 from flask import Flask, request
 from telegram import Bot, Update
+from telegram.error import RetryAfter
 from telegram.ext import Dispatcher
 
 from bot import attach_handlers
@@ -32,7 +34,12 @@ attach_handlers(dispatcher)
 thread = Thread(target=dispatcher.start, name='dispatcher')
 thread.start()
 
-bot.set_webhook(BASE_URL + TOKEN)
+while True:
+    try:
+        bot.set_webhook(BASE_URL + TOKEN)
+        break
+    except RetryAfter as e:
+        sleep(e.retry_after)
 
 
 @app.route('/{}'.format(TOKEN), methods=['POST'])
