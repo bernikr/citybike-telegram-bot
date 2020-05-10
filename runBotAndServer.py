@@ -10,7 +10,7 @@ from telegram import Bot, Update
 from telegram.error import RetryAfter
 from telegram.ext import Dispatcher
 
-from bot import attach_handlers
+from app.modules import register_blueprints, attach_handlers
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
@@ -21,6 +21,7 @@ BASE_URL = os.environ.get('BASE_URL')
 PORT = os.environ.get('PORT')
 
 app = Flask(__name__)
+register_blueprints(app)
 
 update_queue = Queue()
 
@@ -53,3 +54,7 @@ def respond():
 @app.route('/')
 def index():
     return 'hello world'
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=PORT)

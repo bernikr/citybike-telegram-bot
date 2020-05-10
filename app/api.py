@@ -1,14 +1,14 @@
 from datetime import datetime, date
+from json import JSONEncoder
 
-from flask import Flask, request, Response, json
-from flask.json import JSONEncoder
+from flask import Blueprint, json, request, Response
 
-from citybikeAPI import CitybikeAccount, LoginError
+from app.citybikeAPI import CitybikeAccount, LoginError
 
-app = Flask(__name__)
+api = Blueprint('api', __name__, url_prefix='/api')
 
 
-@app.route('/rides', methods=['POST'])
+@api.route('/rides', methods=['POST'])
 def hello_world():
     try:
         acc = CitybikeAccount({'username': str(request.form['username']), 'password': str(request.form['password'])})
@@ -41,6 +41,3 @@ class DateTimeEncoder(JSONEncoder):
         if isinstance(o, date):
             return o.strftime("%Y-%m-%d")
 
-
-if __name__ == "__main__":
-    app.run()

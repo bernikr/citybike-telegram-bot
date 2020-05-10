@@ -4,7 +4,7 @@ import logging
 import requests
 import xmltodict
 
-from entities import Station
+from app.entities import Station
 
 logger = logging.getLogger(__name__)
 
