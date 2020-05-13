@@ -94,5 +94,9 @@ class CitybikeAccount:
         # load all pages and yield their contents
         for i in range(0, ride_count, 5):
             # read the rows
+            count = 0
             for r in self.load_page(i, since=since):
+                count += 1
                 yield r
+            if count < 5:
+                break
