@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from telegram.ext import MessageHandler, Filters, ConversationHandler, CommandHandler
 
@@ -21,7 +22,7 @@ def get_nearby_stations(update, context):
         home_station, distance = stationService.get_home_station_info(update.message.chat_id,
                                                                       get_location_from_update(update))
 
-        create_task("reload_rides", data=str(update.message.chat_id))
+        create_task("reload_rides", datetime.now(), data=str(update.message.chat_id))
 
         if home_station is None:
             reply_function(update, context)("No home station set.\nUse /sethome to set it")
