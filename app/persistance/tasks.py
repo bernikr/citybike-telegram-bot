@@ -2,7 +2,7 @@ import logging
 
 from sqlalchemy import Column, types
 
-from app.persistance.db import Base, DB, db_engine
+from app.persistance.db import Base, DB
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +45,3 @@ def pop_tasks(time):
             distinct_tasks.append(t)
 
     return distinct_tasks
-
-
-####
-# Create all database tables on load
-Base.metadata.create_all(db_engine)

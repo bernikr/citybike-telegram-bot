@@ -46,8 +46,3 @@ def get_setting(user_id, setting):
         return None
     else:
         return json.loads(setting.value)
-
-
-####
-# Create all database tables on load
-Base.metadata.create_all(db_engine)

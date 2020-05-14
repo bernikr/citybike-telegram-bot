@@ -11,6 +11,7 @@ from telegram.error import RetryAfter
 from telegram.ext import Dispatcher
 
 from app.bot.modules import attach_handlers
+from app.persistance.createDB import create_db
 from app.server.modules import register_blueprints
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -20,6 +21,8 @@ logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TOKEN')
 BASE_URL = os.environ.get('BASE_URL')
 PORT = os.environ.get('PORT')
+
+create_db()
 
 app = Flask(__name__)
 register_blueprints(app)

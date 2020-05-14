@@ -12,6 +12,8 @@ if __name__ == "__main__":
                         level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
     logger = logging.getLogger(__name__)
 
+    create_db()
+
     if path.exists('config.json'):
         with open('config.json') as f:
             config = json.load(f)
