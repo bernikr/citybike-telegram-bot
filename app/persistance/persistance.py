@@ -1,16 +1,11 @@
 import json
 import logging
-import os
 
-from sqlalchemy import Column, types, create_engine, PrimaryKeyConstraint
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import Column, types, PrimaryKeyConstraint
+
+from app.persistance.db import Base, DB, db_engine
 
 logger = logging.getLogger(__name__)
-Base = declarative_base()
-
-db_engine = create_engine(os.environ.get('DATABASE_URL', 'sqlite:///citybikes.db'))
-DB = scoped_session(sessionmaker(bind=db_engine))
 
 
 #################
@@ -43,7 +38,10 @@ def get_setting(user_id, setting):
     setting = str(setting)
 
     session = DB()
-    setting = session.query(UserSetting).filter(UserSetting.user_id == user_id, UserSetting.setting == setting).first()
+    setting = session.query(UserSetting) \
+        .filter(UserSetting.user_id == user_id, UserSetting.setting == setting) \
+        .first()
+
     if setting is None:
         return None
     else:
