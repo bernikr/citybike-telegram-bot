@@ -3,7 +3,7 @@ from json import JSONEncoder
 
 from flask import Blueprint, json, request, Response
 
-from app.citybikeAPI import CitybikeAccount, LoginError
+from app.apis.citybikeAPI import CitybikeAccount, LoginError
 
 api = Blueprint('api', __name__, url_prefix='/api')
 

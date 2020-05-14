@@ -1,6 +1,7 @@
 import logging
 
-from app import persistance, stationAPI
+from app.persistance import persistance
+from app.apis import stationAPI
 
 logger = logging.getLogger(__name__)
 

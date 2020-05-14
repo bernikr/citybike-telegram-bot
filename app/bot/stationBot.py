@@ -2,10 +2,10 @@ import logging
 
 from telegram.ext import MessageHandler, Filters, ConversationHandler, CommandHandler
 
-from app import stationService
-from app.stationMapper import station_to_text
-from app.utils import reply_function
-from app.entities import Location
+from app.service import stationService
+from app.bot.stationMapper import station_to_text
+from app.bot.utils import reply_function
+from app.service.entities import Location
 
 logger = logging.getLogger(__name__)
 

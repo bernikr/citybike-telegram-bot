@@ -10,7 +10,8 @@ from telegram import Bot, Update
 from telegram.error import RetryAfter
 from telegram.ext import Dispatcher
 
-from app.modules import register_blueprints, attach_handlers
+from app.bot.modules import attach_handlers
+from app.server.modules import register_blueprints
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])

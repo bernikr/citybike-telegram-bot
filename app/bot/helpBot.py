@@ -2,7 +2,7 @@ import logging
 
 from telegram.ext import CommandHandler
 
-from app.utils import reply_function
+from app.bot.utils import reply_function
 
 logger = logging.getLogger(__name__)
 

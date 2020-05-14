@@ -5,7 +5,7 @@ from os import path
 
 from telegram.ext import Updater
 
-from app.bot import attach_handlers
+from app.bot.modules import attach_handlers
 
 if __name__ == "__main__":
     logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

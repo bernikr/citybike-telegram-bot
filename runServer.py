@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app.modules import register_blueprints
+from app.server.modules import register_blueprints
 
 app = Flask(__name__)
 
